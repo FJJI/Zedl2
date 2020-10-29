@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "68225131715",
+    "firebase_url": "https://zeld2-bba24.firebaseio.com",
+    "project_id": "zeld2-bba24",
+    "storage_bucket": "zeld2-bba24.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68225131715:android:b8574592ed7722cfe2ae76",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.Zeldd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68225131715-4h0enmfb7mh0e7k1abvprornqrgsn75s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCi9YsjsKTebeCvCTNfl4dPAAAxvLMoD2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68225131715-4h0enmfb7mh0e7k1abvprornqrgsn75s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

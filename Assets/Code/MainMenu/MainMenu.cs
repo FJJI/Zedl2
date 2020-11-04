@@ -26,7 +26,7 @@ public class MainMenu : MonoBehaviour
     private DatabaseReference reference;
     private FirebaseDatabase dbInstance;
 
-
+    [Obsolete]
     void Start()
     {
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");

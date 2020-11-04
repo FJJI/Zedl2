@@ -21,7 +21,7 @@ public class loginscript : MonoBehaviour
     public Text ErrorText, RePassWordLabel, EmailLabel;
     public bool mail, uname, just_created;
 
-
+    [Obsolete]
     void Start()
     {
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");
@@ -50,11 +50,13 @@ public class loginscript : MonoBehaviour
 
     public void LoginCall()
     {
+        Debug.Log("Login CLick");
         Login(UserNameInput.text, PasswordInput.text);
     }
 
     public void SignUpCall()
     {
+        Debug.Log("Create Click");
         Signup(UserNameInput.text, PasswordInput.text, RePasswordInput.text, EmailInput.text);
     }
 
@@ -113,7 +115,7 @@ public class loginscript : MonoBehaviour
         }
 
         ErrorText.text = "";
-
+        ErrorText.text = "Creating User";
         await dbInstance.GetReference("users").GetValueAsync().ContinueWith(task => {
             if (task.IsFaulted)
             {
@@ -172,6 +174,7 @@ public class loginscript : MonoBehaviour
 
     public async void Login(string username, string password)
     {
+        ErrorText.text = "Trying to Login";
         await dbInstance.GetReference("users").GetValueAsync().ContinueWith(task =>
         {
             if (task.IsFaulted)

@@ -19,6 +19,7 @@ public class ProfileScript : MonoBehaviour
     public InputField userInput, emailInput, newPassInput, oldPassInput;
     public Button editButton, saveButton, backButton, cancelButton;
 
+    [Obsolete]
     void Start()
     {
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");

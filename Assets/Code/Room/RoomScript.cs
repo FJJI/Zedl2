@@ -27,11 +27,13 @@ public class RoomScript : MonoBehaviour
     public long capacity;
     public int ready_players;
 
+    [Obsolete]
     void Start()
     {
         logged_key = PlayerPrefs.GetString("UID");
         roomId = PlayerPrefs.GetString("Room");
-        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeld-e907d.firebaseio.com/");
+        idLabel.text = roomId;
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
         room_players = new List<PlayerClass>();
@@ -47,7 +49,6 @@ public class RoomScript : MonoBehaviour
         ffavu = "";
         SetupDisplay();
         dbInstance.GetReference("rooms").Child(roomId).Child("messages").ChildAdded += HandleMessageAdded;
-        dbInstance.GetReference("rooms").Child(roomId).Child("players").ChildAdded += HandlePLayerAdded;
         dbInstance.GetReference("rooms").Child(roomId).Child("players").ChildRemoved += HandlePlayerRemoved;
         dbInstance.GetReference("rooms").Child(roomId).Child("players").ChildChanged += HandlePlayerEdited;
         sendButton.onClick.AddListener(() => SenderChat(chatInput.text));
@@ -103,11 +104,24 @@ public class RoomScript : MonoBehaviour
         IDictionary dictPlayer = (IDictionary)data.Value;
         string temp_name = dictPlayer["username"].ToString();
         PlayerClass p_row = new PlayerClass(dictPlayer["username"].ToString(), dictPlayer["ready"].ToString());
-        GameObject SpawnedItem = Instantiate(playersRow);
-        SpawnedItem.transform.SetParent(playersContent, false);
-        SpawnedItem.transform.GetChild(0).GetComponent<Text>().text = p_row.username;
-        SpawnedItem.transform.GetChild(1).GetComponent<Text>().text = " ";
-        SpawnedItem.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(() => DisplayProfile(temp_name));
+        for(int p = 0; p < room_players.Count; p++)
+        {
+            Debug.Log(room_players[p].username);
+            Debug.Log(p_row.username);
+            if (p_row.username == room_players[p].username)
+            {
+                return;
+            }
+        }
+        if (p_row.username != PlayerPrefs.GetString("UserName"))
+        {
+            GameObject SpawnedItem = Instantiate(playersRow);
+            SpawnedItem.transform.SetParent(playersContent, false);
+            SpawnedItem.transform.GetChild(0).GetComponent<Text>().text = p_row.username;
+            SpawnedItem.transform.GetChild(1).GetComponent<Text>().text = " ";
+            SpawnedItem.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(() => DisplayProfile(temp_name));
+        }
+        
     }
 
     void HandlePlayerRemoved(object sender, ChildChangedEventArgs args)
@@ -119,15 +133,17 @@ public class RoomScript : MonoBehaviour
         }
         DataSnapshot data = args.Snapshot;
         IDictionary dictPlayer = (IDictionary)data.Value;
-        foreach (GameObject child in playersContent)
+        foreach (Transform jugadores in playersContent)
         {
-            if (child.transform.GetChild(0).GetComponent<Text>().text == dictPlayer["username"].ToString())
+            if (jugadores.transform.GetChild(0).GetComponent<Text>().text == dictPlayer["username"].ToString())
             {
-                child.SetActive(false);
+                Debug.Log(jugadores.transform.GetChild(0).GetComponent<Text>().text);
+                jugadores.gameObject.SetActive(false);
             }
         }
         if (data.Key == room_owner)
         {
+            dbInstance.GetReference("rooms").Child(roomId).Child("players").ChildRemoved -= HandlePlayerRemoved;
             SceneManager.LoadScene("MainMenu");
         }
     }
@@ -153,13 +169,18 @@ public class RoomScript : MonoBehaviour
                     IDictionary dictPlayer = (IDictionary)p.Value;
                     PlayerClass p_row = new PlayerClass(dictPlayer["username"].ToString(), dictPlayer["ready"].ToString());
                     room_players.Add(p_row);
+                    if (dictPlayer["ready"].ToString() == "true")
+                    {
+                        ready_players += 1;
+                    }                   
                 }
 
             }
         });
-
+        playersLabel.text = "Players" + ready_players.ToString() + "/" + capacity.ToString();
         for (int i = 0; i < room_players.Count; i++)
         {
+
             GameObject SpawnedItem = Instantiate(playersRow);
             string temp_name = room_players[i].username;
             SpawnedItem.transform.SetParent(playersContent, false);
@@ -167,6 +188,7 @@ public class RoomScript : MonoBehaviour
             SpawnedItem.transform.GetChild(1).GetComponent<Text>().text = " ";
             SpawnedItem.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(() => DisplayProfile(temp_name));
         }
+        dbInstance.GetReference("rooms").Child(roomId).Child("players").ChildAdded += HandlePLayerAdded;
     }
 
     public async void ReadyPress()
@@ -186,7 +208,13 @@ public class RoomScript : MonoBehaviour
 
     public async void LeavePress()
     {
+        dbInstance.GetReference("rooms").Child(roomId).Child("players").ChildRemoved -= HandlePlayerRemoved;
         await reference.Child("rooms").Child(roomId).Child("players").Child(logged_key).RemoveValueAsync();
+        if (logged_key == room_owner)
+        {
+            Debug.Log("Eliminando Sala");
+            await reference.Child("rooms").Child(roomId).RemoveValueAsync();
+        }
         SceneManager.LoadScene("MainMenu");
     }
 

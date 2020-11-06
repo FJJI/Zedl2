@@ -4,16 +4,16 @@ using UnityEngine;
 using Firebase;
 using Firebase.Database;
 using Firebase.Unity.Editor;
-using Firebase.Auth;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 public class loginscript : MonoBehaviour
 {
+    static FirebaseApp DefaultInstance;
     public string logged_key;
-    private FirebaseAuth auth;
     private DatabaseReference reference;
     private FirebaseDatabase dbInstance;
     public InputField UserNameInput, PasswordInput, RePasswordInput, EmailInput;
@@ -24,9 +24,9 @@ public class loginscript : MonoBehaviour
     [Obsolete]
     void Start()
     {
+        DefaultInstance = FirebaseApp.GetInstance("Zeldd");
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");
         Debug.Log("started");
-        auth = FirebaseAuth.DefaultInstance;
         logged_key = null;
         mail = false;
         uname = false;
@@ -51,13 +51,13 @@ public class loginscript : MonoBehaviour
     public void LoginCall()
     {
         Debug.Log("Login CLick");
-        Login(UserNameInput.text, PasswordInput.text);
+        //Login(UserNameInput.text, PasswordInput.text);
     }
 
     public void SignUpCall()
     {
         Debug.Log("Create Click");
-        Signup(UserNameInput.text, PasswordInput.text, RePasswordInput.text, EmailInput.text);
+        //Signup(UserNameInput.text, PasswordInput.text, RePasswordInput.text, EmailInput.text);
     }
 
     public void DisplayForm()
@@ -214,22 +214,12 @@ public class loginscript : MonoBehaviour
             PlayerPrefs.SetString("UserName", UserNameInput.text);
             SceneManager.LoadScene("MainMenu");
         }
+        else 
+        {
+            ErrorText.text = "Wrong Credentials";
+        }
 
     }
 
-    public void GoogleAuth()
-    {
-
-    }
-
-    public void Wait(float seconds, Action action)
-    {
-        StartCoroutine(_wait(seconds, action));
-    }
-
-    IEnumerator _wait(float time, Action callback)
-    {
-        yield return new WaitForSeconds(time);
-        callback();
-    }
+    
 }

@@ -22,7 +22,7 @@ public class MainMenu : MonoBehaviour
     bool found, friend_showed, request_showed, room_exist, room_full, owner_friend;
     long rows;
     int room_size;
-    public string logged_key, target, room_owner;
+    public string logged_key, target, room_owner, friend_code;
     private DatabaseReference reference;
     private FirebaseDatabase dbInstance;
 
@@ -33,6 +33,7 @@ public class MainMenu : MonoBehaviour
         found = false;
         room_exist = false;
         friend_showed = false;
+        friend_code = "";
         request_showed = false;
         target = "";
         rows = 0;
@@ -54,6 +55,7 @@ public class MainMenu : MonoBehaviour
         AddFriend.onClick.AddListener(() => AddFriends(logged_key, FriendToAdd.text));
         LogoutButton.onClick.AddListener(() => Logout());
         CreateRoomButton.onClick.AddListener(() => CreateRoom());
+        AccessRoomButton.onClick.AddListener(() => JoinRoom(RoomCode.text));
 
     }
 
@@ -177,24 +179,24 @@ public class MainMenu : MonoBehaviour
 
     }
 
-    public async void AddFriends(string key, string friend_code)
+    public async void AddFriends(string key, string friend_name)
     {
         //write to target user's request list
-        await dbInstance.GetReference("users").Child(friend_code).GetValueAsync().ContinueWith(task => {
+        await dbInstance.GetReference("users").GetValueAsync().ContinueWith(task => {
             if (task.IsFaulted) { }
             else if (task.IsCompleted)
             {
                 DataSnapshot snapshot = task.Result;
-                if (snapshot == null)
+                foreach (DataSnapshot user in snapshot.Children)
                 {
-                    found = false;
-                    Debug.Log("not founded");
-                }
-                else
-                {
-                    found = true;
-                    IDictionary dictUser = (IDictionary)snapshot.Value;
-                    Debug.Log("founded");
+                    IDictionary dictUser = (IDictionary)user.Value;
+                    if (dictUser["username"].ToString() == friend_name)
+                    {                        
+                        friend_code = user.Key.ToString();
+                        found = true;
+                        break;
+
+                    }
                 }
 
             }
@@ -207,7 +209,7 @@ public class MainMenu : MonoBehaviour
         else
         {
             ErrorMessage.text = "Resquest sended";
-            Request request = new Request(logged_key, PlayerPrefs.GetString("UserName"), friend_code);
+            Request request = new Request(key, PlayerPrefs.GetString("UserName"), friend_code);
             string json = JsonUtility.ToJson(request);
             await reference.Child("requestLists").Child(friend_code).Child("requests").Child(logged_key).SetRawJsonValueAsync(json);
 
@@ -276,6 +278,7 @@ public class MainMenu : MonoBehaviour
 
     public async void JoinRoom(string roomId)
     {
+        Debug.Log("Buscando Sala");
         await dbInstance.GetReference("rooms").Child(roomId).GetValueAsync().ContinueWith(task => {
             if (task.IsFaulted) { }
             else if (task.IsCompleted)
@@ -298,6 +301,7 @@ public class MainMenu : MonoBehaviour
 
         if (room_exist == true)
         {
+            Debug.Log("Verificando Amistad");
             await dbInstance.GetReference("friendLists").Child(logged_key).Child("friends").Child(room_owner).GetValueAsync().ContinueWith(task =>
             {
                 if (task.IsFaulted) { }
@@ -319,6 +323,7 @@ public class MainMenu : MonoBehaviour
                 ErrorMessage.text = "No eres amigo del dueño de la sesion";
                 return;
             }
+            Debug.Log("Comprobando estado de la Sala");
             await dbInstance.GetReference("rooms").Child(roomId).Child("players").GetValueAsync().ContinueWith(task => {
                 if (task.IsFaulted) { }
                 else if (task.IsCompleted)
@@ -338,6 +343,7 @@ public class MainMenu : MonoBehaviour
             });
             if (room_full == false)
             {
+                Debug.Log("Ingresando a Sala");
                 PlayerPrefs.SetString("Room", roomId);
                 PlayerClass player = new PlayerClass(PlayerPrefs.GetString("UserName"), "false");
                 string json = JsonUtility.ToJson(player);

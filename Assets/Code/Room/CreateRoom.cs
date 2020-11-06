@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Firebase;
 using Firebase.Database;
 using Firebase.Unity.Editor;
-using Firebase.Auth;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
@@ -18,9 +15,10 @@ public class CreateRoom : MonoBehaviour
     public bool found;
     public int roomId;
 
+    [Obsolete]
     void Start()
     {
-        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeld-e907d.firebaseio.com/");
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
         created = true;
@@ -29,7 +27,7 @@ public class CreateRoom : MonoBehaviour
         twoPButton.onClick.AddListener(() => RoomCreation("2"));
         threePButton.onClick.AddListener(() => RoomCreation("3"));
         FourPButton.onClick.AddListener(() => RoomCreation("4"));
-        backButton.onClick.AddListener(() => SceneManager.LoadScene("Main Menu"));
+        backButton.onClick.AddListener(() => SceneManager.LoadScene("MainMenu"));
     }
 
     public async void RoomCreation(string players)
@@ -54,14 +52,16 @@ public class CreateRoom : MonoBehaviour
 
                 }
             });
-            PlayerPrefs.SetString("Room", roomId.ToString());
-            RoomClass room = new RoomClass(PlayerPrefs.GetString("UID"), players);
-            string json = JsonUtility.ToJson(room);
-            await reference.Child("rooms").Child(roomId.ToString()).SetRawJsonValueAsync(json);
-            PlayerClass player = new PlayerClass(PlayerPrefs.GetString("UserName"), "false");
-            json = JsonUtility.ToJson(player);
-            await reference.Child("rooms").Child(roomId.ToString()).Child("players").Child(PlayerPrefs.GetString("UID")).SetRawJsonValueAsync(json);
-            SceneManager.LoadScene("RoomScene");
         }
+        Debug.Log("creando room");
+        PlayerPrefs.SetString("Room", roomId.ToString());
+        RoomClass room = new RoomClass(PlayerPrefs.GetString("UID"), players);
+        string json = JsonUtility.ToJson(room);
+        await reference.Child("rooms").Child(roomId.ToString()).SetRawJsonValueAsync(json);
+        Debug.Log("Room creada");
+        PlayerClass player = new PlayerClass(PlayerPrefs.GetString("UserName"), "false");
+        json = JsonUtility.ToJson(player);
+        await reference.Child("rooms").Child(roomId.ToString()).Child("players").Child(PlayerPrefs.GetString("UID")).SetRawJsonValueAsync(json);
+        SceneManager.LoadScene("RoomScene");
     }
 }

@@ -13,6 +13,7 @@ public class Nodo : MonoBehaviour
     public SpriteRenderer sprite;
     public int healingFactor;
     public int dmgFactor;
+    public int points;
     float fade = 0;
 
     //sacados del anterior juego ver como colocar

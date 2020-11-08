@@ -146,6 +146,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae18834082dfbc546b6ad27e0bc9ad53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: 0
+  total_unions: 2
+  used_unions: 0
+  type: 0
+  objectives: []
+  halo: {fileID: 1169268234281552988}
+  sprite: {fileID: 1169268234281552984}
+  healingFactor: 0
+  dmgFactor: 0
+  points: 0
+  msgGameObject: {fileID: 0}
 --- !u!1 &1169268235496552619
 GameObject:
   m_ObjectHideFlags: 0

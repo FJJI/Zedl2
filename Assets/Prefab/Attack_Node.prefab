@@ -146,6 +146,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae18834082dfbc546b6ad27e0bc9ad53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: 0
+  total_unions: 2
+  used_unions: 0
+  type: 0
+  objectives: []
+  halo: {fileID: 2098248070858093093}
+  sprite: {fileID: 40449514753517242}
+  healingFactor: 0
+  dmgFactor: 0
+  points: 0
+  msgGameObject: {fileID: 0}
 --- !u!1 &597670796563271461
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,8 +347,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 0.8
+  m_fontSizeBase: 0.8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

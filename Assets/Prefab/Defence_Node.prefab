@@ -378,3 +378,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae18834082dfbc546b6ad27e0bc9ad53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: 0
+  total_unions: 2
+  used_unions: 0
+  type: 0
+  objectives: []
+  halo: {fileID: 754039136905801142}
+  sprite: {fileID: 6779469752411818594}
+  healingFactor: 0
+  dmgFactor: 0
+  points: 0
+  msgGameObject: {fileID: 0}

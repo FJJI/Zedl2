@@ -33,6 +33,7 @@ public class Nodo : MonoBehaviour
         for (int i = 0; i < total_unions; i++)
         {
             objectives.Add(null);
+            unions.Add(null);
         }
     }
 

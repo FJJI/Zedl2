@@ -10,6 +10,8 @@ public class Data_Inicio_Turno : MonoBehaviour
     public int playerTurn;  // para saber a quien le damos el beneficio de jugar, sino poner una nota
     public int InitialPlayers;  // para saber la cantidad de la player para armar la partida, los cambios de turno y saber cuando alguien pierde
     public List<bool> defeated;
+    public List<string> fav_unit = new List<string>{"none", "none", "none", "none"};
+    public List<string> players;
 
     // Los Nodos + la flecha 
     public GameObject Normal;

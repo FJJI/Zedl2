@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class Inicio_Ronda : MonoBehaviour
 {
     Data_Inicio_Turno data;
-
     void setup()
     {
         if (data.turn == 0) // si es el primer turno (turno 0 para el armado), armo una nueva partida, de lo contrario, cargo los datos existentes.
@@ -14,7 +15,7 @@ public class Inicio_Ronda : MonoBehaviour
         }
         else  // Cargo la partida guardada
         {
-
+            //TODO
         }
     }
 
@@ -24,41 +25,37 @@ public class Inicio_Ronda : MonoBehaviour
         GameObject Extra = data.Extra;
         GameObject Ataque = data.Ataque;
         GameObject Defensa = data.Defensa;
+        List<GameObject> nodes = new List<GameObject> {Normal,Extra,Ataque,Defensa}; // Ajustar por el que se toma en favoritos 
 
-        GameObject e = Instantiate(Normal, new Vector3(7, 3, -1), Quaternion.identity);
-        GameObject n = Instantiate(Extra, new Vector3(7, -3, -1), Quaternion.identity);
-        GameObject a = Instantiate(Ataque, new Vector3(-7, 3, -1), Quaternion.identity);
-        GameObject d = Instantiate(Defensa, new Vector3(-7, -3, -1), Quaternion.identity);
-        GameObject n2 = Instantiate(Normal, new Vector3(4, -2, -1), Quaternion.identity);
-        GameObject n3 = Instantiate(Normal, new Vector3(4, 2, -1), Quaternion.identity);
-        GameObject n4 = Instantiate(Normal, new Vector3(-4, -2, -1), Quaternion.identity);
-        GameObject n5 = Instantiate(Normal, new Vector3(-4, 2, -1), Quaternion.identity);
-        GameObject n6 = Instantiate(Normal, new Vector3(0, 3, -1), Quaternion.identity);
-        GameObject n7 = Instantiate(Normal, new Vector3(0, -3, -1), Quaternion.identity);
-
-        e.GetComponent<Nodo>().owner = 1;
-        n.GetComponent<Nodo>().owner = 2;
-        a.GetComponent<Nodo>().owner = 3;
-        d.GetComponent<Nodo>().owner = 4;
-        n2.GetComponent<Nodo>().owner = 0;
-        n3.GetComponent<Nodo>().owner = 0;
-        n4.GetComponent<Nodo>().owner = 0;
-        n5.GetComponent<Nodo>().owner = 0;
-        n6.GetComponent<Nodo>().owner = 0;
-        n7.GetComponent<Nodo>().owner = 0;
-
-        e.GetComponent<Nodo>().identifier = 0;
-        n.GetComponent<Nodo>().identifier = 1;
-        a.GetComponent<Nodo>().identifier = 2;
-        d.GetComponent<Nodo>().identifier = 3;
-        n2.GetComponent<Nodo>().identifier = 4;
-        n3.GetComponent<Nodo>().identifier = 5;
-        n4.GetComponent<Nodo>().identifier = 6;
-        n5.GetComponent<Nodo>().identifier = 7;
-        n6.GetComponent<Nodo>().identifier = 8;
-        n7.GetComponent<Nodo>().identifier = 9;
-
-
+        List<int> positionsx = new List<int> {7,-7, 7,-7, 4,4,-4,-4,0, 0};
+        List<int> positionsy = new List<int> {3,-3,-3, 3,-2,2,-2, 2,3,-3};
+        for (int i = 1; i <= 10; i++)
+        {
+            Debug.Log(i);
+            GameObject nuevo_nodo;
+            if (i <= data.InitialPlayers)
+            {
+                int fav;
+                if (data.fav_unit[i-1] == "none") // si no tiene unidad favorita
+                {
+                    fav = Random.Range(1, 4); // entre 1 y 4
+                }
+                else
+                {
+                    fav = int.Parse(data.fav_unit[i - 1]);
+                }
+                nuevo_nodo = Instantiate(nodes[fav], new Vector3(positionsx[i-1], positionsy[i-1], -1), Quaternion.identity);
+                nuevo_nodo.GetComponent<Nodo>().owner = i;
+                
+            }
+            else // si ya estan los nodos iniciales
+            {
+                nuevo_nodo = Instantiate(nodes[Random.Range(0, 4)], new Vector3(positionsx[i-1], positionsy[i-1], -1), Quaternion.identity);
+                nuevo_nodo.GetComponent<Nodo>().owner = 0;
+            }
+            nuevo_nodo.GetComponent<Nodo>().identifier = i - 1;
+            nuevo_nodo.GetComponent<Nodo>().points = 50;
+        }
         data.turn = 1; //una vez iniciado todo, hacemos que parta el juego con el 1° turno
         data.playerTurn++;
 
@@ -86,6 +83,62 @@ public class Inicio_Ronda : MonoBehaviour
         sender.GetComponent<Nodo>().unions.Add(arrowObject);
     }
 
+    void PointsAfterConnection(GameObject sender, GameObject objective)// use only with values pre validated by PermitConnection, reduce sender points by stretching concept
+    {
+        Vector2 posSender = sender.transform.position;
+        Vector2 posObjective = objective.transform.position;
+        float distTotal = Vector2.Distance(posSender, posObjective);
+        int points = sender.GetComponent<Nodo>().points;
+        int finalPoints = points - (int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth);
+        sender.GetComponent<Nodo>().points = finalPoints;
+    }
+
+    void RecoverPointsFromConnectionCancel(GameObject sender, GameObject objective)// recover all the points (or less when over 100) when 
+    {
+        Vector2 posSender = sender.transform.position;
+        Vector2 posObjective = objective.transform.position;
+        float distTotal = Vector2.Distance(posSender, posObjective);
+        int points = sender.GetComponent<Nodo>().points;
+        int finalPoints = points + Mathf.Min(100, (int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth));
+        sender.GetComponent<Nodo>().points = finalPoints;
+    }
+
+    void DeleteConnection(GameObject sender, GameObject objective) //remove the arrow from unions and objectives lists, and scene
+    {
+        int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
+        Destroy(sender.GetComponent<Nodo>().unions[index]);
+        sender.GetComponent<Nodo>().unions[index] = null;
+        sender.GetComponent<Nodo>().objectives[index] = null;
+    }
+
+    void DefinePowerFactors(GameObject unit) //this function should be executed when ending the turn before doing the healings/damages, after all connections and points adjustments are done
+    {
+        int points = unit.GetComponent<Nodo>().points;
+        int unitType = unit.GetComponent<Nodo>().type;
+        unit.GetComponent<Nodo>().healingFactor = (int)Mathf.Sqrt(points);
+        unit.GetComponent<Nodo>().dmgFactor = (int)Mathf.Sqrt(points);
+        if (unitType == 1) { unit.GetComponent<Nodo>().dmgFactor *= 2; }
+        else if (unitType == 2) { unit.GetComponent<Nodo>().healingFactor *= 2; }
+    }
+
+    void AtackHealUnit(GameObject sender, GameObject objective) //remeber to DefinePowerFactors before atking/healing, this function autoconvert the unit owner when defeated
+    {
+        Nodo senderAttributes = sender.GetComponent<Nodo>();
+        Nodo objectiveAttributes = objective.GetComponent<Nodo>();
+        if (senderAttributes.owner == objectiveAttributes.owner)
+        {
+            objectiveAttributes.points = Mathf.Min(100, objectiveAttributes.points + senderAttributes.healingFactor);
+        }
+        else
+        {
+            objectiveAttributes.points -= senderAttributes.dmgFactor;
+            if (objectiveAttributes.points < 0)
+            {
+                objectiveAttributes.points *= -1;
+                objectiveAttributes.owner = senderAttributes.owner;
+            }
+        }
+    }
     bool PermitConnection(GameObject sender, GameObject objective)
     {
         int points = sender.GetComponent<Nodo>().points;

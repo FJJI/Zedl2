@@ -187,6 +187,12 @@ public class Nodo : MonoBehaviour
         }
     }
 
+    void UpdatePointsNumber(GameObject unit) //this function update the value on the centerText of the unit, this should be looped throught all units
+    {
+        int points = unit.GetComponent<Nodo>().points;
+        unit.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = points.ToString();
+    }
+
     void Start()
     {
         data = GameObject.Find("Data").GetComponent<Data_Inicio_Turno>();

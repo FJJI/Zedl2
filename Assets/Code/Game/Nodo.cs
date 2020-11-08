@@ -11,6 +11,7 @@ public class Nodo : MonoBehaviour
     public List<GameObject> objectives;
     public Component halo;
     public SpriteRenderer sprite;
+    public int points;
     public int healingFactor;
     public int dmgFactor;
     float fade = 0;

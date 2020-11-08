@@ -18,7 +18,7 @@ public class Inicio_Ronda : MonoBehaviour
         }
     }
 
-    void defaultStart()
+    void defaultStart() // Este metodo crea 10 nodos para partir (por ahora en posicion fixed)
     {
         GameObject Normal = data.Normal;
         GameObject Extra = data.Extra;

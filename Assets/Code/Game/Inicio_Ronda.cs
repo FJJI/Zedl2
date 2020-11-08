@@ -36,6 +36,32 @@ public class Inicio_Ronda : MonoBehaviour
         GameObject n6 = Instantiate(Normal, new Vector3(0, 3, -1), Quaternion.identity);
         GameObject n7 = Instantiate(Normal, new Vector3(0, -3, -1), Quaternion.identity);
 
+        e.GetComponent<Nodo>().owner = 1;
+        n.GetComponent<Nodo>().owner = 2;
+        a.GetComponent<Nodo>().owner = 3;
+        d.GetComponent<Nodo>().owner = 4;
+        n2.GetComponent<Nodo>().owner = 0;
+        n3.GetComponent<Nodo>().owner = 0;
+        n4.GetComponent<Nodo>().owner = 0;
+        n5.GetComponent<Nodo>().owner = 0;
+        n6.GetComponent<Nodo>().owner = 0;
+        n7.GetComponent<Nodo>().owner = 0;
+
+        e.GetComponent<Nodo>().identifier = 0;
+        n.GetComponent<Nodo>().identifier = 1;
+        a.GetComponent<Nodo>().identifier = 2;
+        d.GetComponent<Nodo>().identifier = 3;
+        n2.GetComponent<Nodo>().identifier = 4;
+        n3.GetComponent<Nodo>().identifier = 5;
+        n4.GetComponent<Nodo>().identifier = 6;
+        n5.GetComponent<Nodo>().identifier = 7;
+        n6.GetComponent<Nodo>().identifier = 8;
+        n7.GetComponent<Nodo>().identifier = 9;
+
+
+        data.turn = 1; //una vez iniciado todo, hacemos que parta el juego con el 1° turno
+        data.playerTurn++;
+
     }
 
     void Connect(GameObject sender, GameObject objective)
@@ -57,6 +83,7 @@ public class Inicio_Ronda : MonoBehaviour
         GameObject arrowObject = Instantiate(data.Flecha, new Vector3(middleX, middleY, 0), Quaternion.identity);
         arrowObject.transform.Rotate(0, 0, angle - 90);
         arrowObject.transform.localScale = new Vector3(0.3f, 0.15f * colliderDistance, 1);
+        sender.GetComponent<Nodo>().unions.Add(arrowObject);
     }
 
     bool PermitConnection(GameObject sender, GameObject objective)

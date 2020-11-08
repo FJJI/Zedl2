@@ -87,11 +87,12 @@ public class Data_Inicio_Turno : MonoBehaviour
 
             objectives = new List<int>();
         }
-        public void addObj(int data)
+        public void adadObj(int data)
         {
             objectives.Add(data);
         }
-    }
         */
+    }
+        
 
 }

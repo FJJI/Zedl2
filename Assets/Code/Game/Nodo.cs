@@ -99,11 +99,11 @@ public class Nodo : MonoBehaviour
         {
             Debug.Log("Ya no hay first" + this.gameObject);
             Debug.Log("Todos los nodos eliminados" + this.gameObject);
-            for (int i = 0; i < objectives.Count; i++)
+            int auxCount = objectives.Count;
+            for (int i = 0; i < auxCount; i++)
             {
-                RecoverPointsFromConnectionCancel(gameObject,objectives[i]);
-                DeleteConnection(gameObject,objectives[i]);
-                Debug.Log("hola");
+                RecoverPointsFromConnectionCancel(gameObject,objectives[0]);
+                DeleteConnection(gameObject,objectives[0]);
             }
             used_unions = 0;
             first = null;

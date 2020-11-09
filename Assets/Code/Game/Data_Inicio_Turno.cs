@@ -21,7 +21,7 @@ public class Data_Inicio_Turno : MonoBehaviour
     public int InitialPlayers;  // para saber la cantidad de la player para armar la partida, los cambios de turno y saber cuando alguien pierde
     public List<bool> defeated = new List<bool> { false, false, false, false }; 
     public List<string> fav_unit = new List<string> { "none", "none", "none", "none" };
-    public List<string> players = new List<string> { "none", "none", "none", "none" };
+    public List<string> players = new List<string> { "papa", "pepe", "pipi", "popo" };
 
 // Los Nodos + la flecha 
 public GameObject Normal;
@@ -55,8 +55,9 @@ public GameObject Normal;
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
 
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").ChildChanged += HandleChangeGame;
+        dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").ChildChanged += HandleChangeGame;
 
-        
+
     }
     private void HandleChangeGame(object sender, ChildChangedEventArgs args)
     {
@@ -72,10 +73,6 @@ public GameObject Normal;
         turn = int.Parse(dataPartida["turn"].ToString());
         playerTurn = int.Parse(dataPartida["playerTurn"].ToString());
         InitialPlayers = int.Parse(dataPartida["InitialPlayers"].ToString());
-        for (int i = 0; i < InitialPlayers; i++)
-        {
-            defeated[i] = bool.Parse(dataPartida["defeated"[i]].ToString());
-        }
         
     }
 
@@ -93,6 +90,15 @@ public GameObject Normal;
         string jsonData = JsonUtility.ToJson(dc);
         await reference.Child("rooms").Child(matchID.ToString()).Child("datapartida").SetRawJsonValueAsync(jsonData);
         Debug.Log("data segura");
+
+        for (int i = 0; i < InitialPlayers; i++)
+        {
+            PlayerClassGame pc = new PlayerClassGame(players[i], i+1, defeated[i], int.Parse(fav_unit[i]));
+            string jsonPlayer = JsonUtility.ToJson(pc);
+            await reference.Child("rooms").Child(matchID.ToString()).Child("participantes").SetRawJsonValueAsync(jsonPlayer);
+            Debug.Log("data segura");
+        }
+        
     }
 
 

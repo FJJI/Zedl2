@@ -8,9 +8,6 @@ public class DataClass // En teoria Firebase puede guardar clases
     public int turn;
     public int playerTurn;  // para saber a quien le damos el beneficio de jugar, sino poner una nota
     public int InitialPlayers;  // para saber la cantidad de la player para armar la partida, los cambios de turno y saber cuando alguien pierde
-    public List<bool> defeated;
-    public List<string> fav_unit;
-    public List<string> players;
 
     public DataClass(Data_Inicio_Turno data)
     {
@@ -18,9 +15,6 @@ public class DataClass // En teoria Firebase puede guardar clases
         turn = data.turn;
         playerTurn = data.playerTurn;
         InitialPlayers = data.InitialPlayers;
-        defeated = data.defeated;
-        fav_unit = data.fav_unit;
-        players = data.players;
     }
 }
 

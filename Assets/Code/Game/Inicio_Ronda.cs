@@ -83,34 +83,6 @@ public class Inicio_Ronda : MonoBehaviour
         sender.GetComponent<Nodo>().unions[index] = arrowObject;
     }
 
-    void PointsAfterConnection(GameObject sender, GameObject objective)// use only with values pre validated by PermitConnection, reduce sender points by stretching concept
-    {
-        Vector2 posSender = sender.transform.position;
-        Vector2 posObjective = objective.transform.position;
-        float distTotal = Vector2.Distance(posSender, posObjective);
-        int points = sender.GetComponent<Nodo>().points;
-        int finalPoints = points - (int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth);
-        sender.GetComponent<Nodo>().points = finalPoints;
-    }
-
-    void RecoverPointsFromConnectionCancel(GameObject sender, GameObject objective)// recover all the points (or less when over 100) when 
-    {
-        Vector2 posSender = sender.transform.position;
-        Vector2 posObjective = objective.transform.position;
-        float distTotal = Vector2.Distance(posSender, posObjective);
-        int points = sender.GetComponent<Nodo>().points;
-        int finalPoints = points + Mathf.Min(100, (int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth));
-        sender.GetComponent<Nodo>().points = finalPoints;
-    }
-
-    void DeleteConnection(GameObject sender, GameObject objective) //remove the arrow from unions and objectives lists, and scene
-    {
-        int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
-        Destroy(sender.GetComponent<Nodo>().unions[index]);
-        sender.GetComponent<Nodo>().unions[index] = null;
-        sender.GetComponent<Nodo>().objectives[index] = null;
-    }
-
     void DefinePowerFactors(GameObject unit) //this function should be executed when ending the turn before doing the healings/damages, after all connections and points adjustments are done
     {
         int points = unit.GetComponent<Nodo>().points;

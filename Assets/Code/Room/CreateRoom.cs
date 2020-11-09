@@ -27,7 +27,7 @@ public class CreateRoom : MonoBehaviour
         twoPButton.onClick.AddListener(() => RoomCreation("2"));
         threePButton.onClick.AddListener(() => RoomCreation("3"));
         FourPButton.onClick.AddListener(() => RoomCreation("4"));
-        backButton.onClick.AddListener(() => SceneManager.LoadScene("MainMenu"));
+        backButton.onClick.AddListener(() => BackMenu());
     }
 
     public async void RoomCreation(string players)
@@ -62,6 +62,14 @@ public class CreateRoom : MonoBehaviour
         PlayerClass player = new PlayerClass(PlayerPrefs.GetString("UserName"), "false");
         json = JsonUtility.ToJson(player);
         await reference.Child("rooms").Child(roomId.ToString()).Child("players").Child(PlayerPrefs.GetString("UID")).SetRawJsonValueAsync(json);
+        Destroy(GameObject.Find("MusicManager"));
         SceneManager.LoadScene("RoomScene");
+        
+    }
+
+    public void BackMenu()
+    {
+        Destroy(GameObject.Find("MusicManager"));
+        SceneManager.LoadScene("MainMenu");
     }
 }

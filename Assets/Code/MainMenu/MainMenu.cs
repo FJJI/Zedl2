@@ -13,7 +13,7 @@ public class MainMenu : MonoBehaviour
 {
     public InputField RoomCode, FriendToAdd;
     public Button FriendListButton, ProfileButton, CreateRoomButton, AccessRoomButton, RequestsButton, FriendsButton, AddFriend, BackButton, LogoutButton;
-    public GameObject FriendsView, RequestsView;
+    public GameObject FriendsView, RequestsView, MusicManager, scrollImage;
     public GameObject FriendRow, RequestRow;
     public Transform FriendContent, RequestContent;
     public Text ErrorMessage;
@@ -78,6 +78,7 @@ public class MainMenu : MonoBehaviour
         BackButton.gameObject.SetActive(true);
         FriendToAdd.gameObject.SetActive(true);
         FriendsView.gameObject.SetActive(true);
+        scrollImage.SetActive(true);
         RequestsView.gameObject.SetActive(false);
         LogoutButton.gameObject.SetActive(false);
         // obtenemos todos los amigos de la lista
@@ -257,12 +258,14 @@ public class MainMenu : MonoBehaviour
         FriendsView.gameObject.SetActive(false);
         RequestsView.gameObject.SetActive(false);
         LogoutButton.gameObject.SetActive(true);
+        scrollImage.SetActive(false);
 
     }
 
     public void DisplayProfile()
     {
         SceneManager.LoadScene("ProfileScene");
+        DontDestroyOnLoad(MusicManager);
     }
 
     public void Logout()
@@ -274,6 +277,7 @@ public class MainMenu : MonoBehaviour
     public void CreateRoom()
     {
         SceneManager.LoadScene("CreateRoomScene");
+        DontDestroyOnLoad(MusicManager);
     }
 
     public async void JoinRoom(string roomId)

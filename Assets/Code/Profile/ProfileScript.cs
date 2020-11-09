@@ -163,6 +163,7 @@ public class ProfileScript : MonoBehaviour
 
     public void BackToMenu()
     {
+        Destroy(GameObject.Find("MusicManager"));
         SceneManager.LoadScene("MainMenu");
     }
 

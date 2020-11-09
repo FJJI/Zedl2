@@ -28,6 +28,7 @@ public class Nodo : MonoBehaviour
     //por si necesitamos alguna data mas, toda debiese existir aca
     Data_Inicio_Turno data;
 
+    /*
     void AddEmpty() // esto esta para cuando se crean, no tener problemas de que me salgo de la lista
     {
         for (int i = 0; i < total_unions; i++)
@@ -36,6 +37,8 @@ public class Nodo : MonoBehaviour
             unions.Add(null);
         }
     }
+    */
+
 
     void ChangeColor()
     {
@@ -96,20 +99,11 @@ public class Nodo : MonoBehaviour
         {
             Debug.Log("Ya no hay first" + this.gameObject);
             Debug.Log("Todos los nodos eliminados" + this.gameObject);
-            for (int i = 0; i < total_unions; i++)
+            for (int i = 0; i < objectives.Count; i++)
             {
-                if (objectives[i] != null)
-                {
-                    RecoverPointsFromConnectionCancel(gameObject,objectives[i]);
-                    DeleteConnection(gameObject,objectives[i]);
-                }
-                /*
-                try
-                {
-                    DeleteConnection(gameObject,objectives[i]);
-                }
-                catch { }
-                */
+                RecoverPointsFromConnectionCancel(gameObject,objectives[i]);
+                DeleteConnection(gameObject,objectives[i]);
+                Debug.Log("hola");
             }
             used_unions = 0;
             first = null;
@@ -122,7 +116,7 @@ public class Nodo : MonoBehaviour
             if (first_code.used_unions + 1 <= first_code.total_unions)
             {
                 //veo la union, si ya existe, la destruyo
-                for (int i = 0; i < first_code.total_unions; i++)
+                for (int i = 0; i < first_code.objectives.Count; i++)
                 {
                     if (first_code.objectives[i] == this.gameObject)
                     {
@@ -134,28 +128,20 @@ public class Nodo : MonoBehaviour
                     }
                 }
                 //no existe, selecciono el espacio para agregar la union
-                for (int i = 0; i < first_code.total_unions; i++)
+
+                if(PermitConnection(first,gameObject))
                 {
-                    // cuando encontremos uno vacio lo usaremos
-                    if (first_code.objectives[i] == null)
-                    {
-                        if(PermitConnection(first,gameObject))
-                        {
-                            first_code.objectives[i] = this.gameObject;
-                            Connect(first, gameObject);
-                            PointsAfterConnection(first, gameObject);
-                            first_code.used_unions += 1;
-                            first=null;
-                            break;
-                        }
-                        
-                    }
+                    first_code.objectives.Add(gameObject);
+                    Connect(first, gameObject);
+                    PointsAfterConnection(first, gameObject);
+                    first_code.used_unions += 1;
+                    first=null;
                 }
 
             }
             else
             {
-                for (int i = 0; i < first_code.total_unions; i++)
+                for (int i = 0; i < first_code.objectives.Count; i++)
                 {
                     if (first_code.objectives[i] == this.gameObject)
                     {
@@ -168,8 +154,8 @@ public class Nodo : MonoBehaviour
                     }
                     else
                     {
-                        //Debug.Log("This node can´t have more nodes");
-                        sendMessage("No connections left!");
+                        Debug.Log("This node can´t have more nodes");
+                        //sendMessage("No connections left!");
                     }
                 }
             }
@@ -200,8 +186,7 @@ public class Nodo : MonoBehaviour
         GameObject arrowObject = Instantiate(data.Flecha, new Vector3(middleX, middleY, 0), Quaternion.identity);
         arrowObject.transform.Rotate(0, 0, angle - 90);
         arrowObject.transform.localScale = new Vector3(0.3f, 0.15f * colliderDistance, 1);
-        int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
-        sender.GetComponent<Nodo>().unions[index] = arrowObject;
+        sender.GetComponent<Nodo>().unions.Add(arrowObject);
     }
 
     void PointsAfterConnection(GameObject sender, GameObject objective)// use only with values pre validated by PermitConnection, reduce sender points by stretching concept
@@ -228,8 +213,8 @@ public class Nodo : MonoBehaviour
     {
         int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
         Destroy(sender.GetComponent<Nodo>().unions[index]);
-        sender.GetComponent<Nodo>().unions[index] = null;
-        sender.GetComponent<Nodo>().objectives[index] = null;
+        sender.GetComponent<Nodo>().unions.RemoveAt(index);
+        sender.GetComponent<Nodo>().objectives.Remove(objective);
         sender.GetComponent<Nodo>().used_unions--;
     }
 
@@ -253,7 +238,6 @@ public class Nodo : MonoBehaviour
     void Start()
     {
         data = GameObject.Find("Data").GetComponent<Data_Inicio_Turno>();
-        AddEmpty();
     }
 
     void Update()

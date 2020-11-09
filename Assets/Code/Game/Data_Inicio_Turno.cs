@@ -57,20 +57,30 @@ public class Data_Inicio_Turno : MonoBehaviour
     }
 
 
-    public async void SaveData()
+    public void SaveData()
     {
-        for (int i = 1; i <= 10; i++) // pongo los nodos en formato para guardar
+        for (int i = 1; i <= nodos.Count; i++) // pongo los nodos en formato para guardar
         {
+            Debug.Log("Nodo" + i);
+            Debug.Log(nodos[i - 1].name);
             NodoClass nc = new NodoClass(nodos[i - 1]);
+            Debug.Log(nc+" iden "+nc.identifier + " obj " + nc.objectives + " type " +nc.type);
             nodosListos.Add(nc);
         }
+        SendData();
+    }
+
+    public async void SendData()
+    {
         jsonNodos = JsonUtility.ToJson(nodosListos);
         await reference.Child("rooms").Child(matchID.ToString()).SetRawJsonValueAsync(jsonNodos);
         Debug.Log("Nodos Guardados");
-
+        /*
         DataClass dc = new DataClass(data);
         string jsonData = JsonUtility.ToJson(dc);
         await reference.Child("rooms").Child(matchID.ToString()).SetRawJsonValueAsync(jsonData);
+        */
     }
 }
+
 

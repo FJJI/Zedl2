@@ -16,7 +16,7 @@ public class NodoClass // En teoria Firebase puede guardar clases
     public int healingFactor;
     public int dmgFactor;
     public int identifier;
-    public List<int> objectives;
+    public List<int> objectives = new List<int> { };
     public NodoClass(GameObject nodo)
     {
         this.posx = nodo.transform.position.x;
@@ -33,7 +33,10 @@ public class NodoClass // En teoria Firebase puede guardar clases
         this.dmgFactor = data_nodo.dmgFactor;
         this.identifier = data_nodo.identifier;
 
-        objectives = new List<int>();
+        for(int i =0; i < data_nodo.objectives.Count; i++)
+        {
+            objectives.Add(data_nodo.objectives[i].GetComponent<Nodo>().identifier);
+        }
     }
     public void addObjective(int data)
     {

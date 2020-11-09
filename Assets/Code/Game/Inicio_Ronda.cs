@@ -61,7 +61,7 @@ public class Inicio_Ronda : MonoBehaviour
 
     }
 
-    void Connect(GameObject sender, GameObject objective)
+    void Connect(GameObject sender, GameObject objective)//be sure to add the objective to list before using this function
     {
         Vector2 posSender = sender.transform.position;
         Vector2 posObjective = objective.transform.position;
@@ -69,7 +69,6 @@ public class Inicio_Ronda : MonoBehaviour
         Vector2 finalPos = objective.GetComponent<CircleCollider2D>().ClosestPoint(posSender);
         float distX = Mathf.Abs(posSender.x - posObjective.x);
         float distY = Mathf.Abs(posSender.y - posObjective.y);
-        //float centerDistance = Vector2.Distance(posSender, posObjective);
         float colliderDistance = Vector2.Distance(initialPos, finalPos);
         float middleX = (posSender.x + posObjective.x) / 2f;
         float middleY = (posSender.y + posObjective.y) / 2f;
@@ -80,7 +79,8 @@ public class Inicio_Ronda : MonoBehaviour
         GameObject arrowObject = Instantiate(data.Flecha, new Vector3(middleX, middleY, 0), Quaternion.identity);
         arrowObject.transform.Rotate(0, 0, angle - 90);
         arrowObject.transform.localScale = new Vector3(0.3f, 0.15f * colliderDistance, 1);
-        sender.GetComponent<Nodo>().unions.Add(arrowObject);
+        int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
+        sender.GetComponent<Nodo>().unions[index] = arrowObject;
     }
 
     void PointsAfterConnection(GameObject sender, GameObject objective)// use only with values pre validated by PermitConnection, reduce sender points by stretching concept
@@ -139,6 +139,8 @@ public class Inicio_Ronda : MonoBehaviour
             }
         }
     }
+
+
     bool PermitConnection(GameObject sender, GameObject objective)
     {
         int points = sender.GetComponent<Nodo>().points;
@@ -155,6 +157,10 @@ public class Inicio_Ronda : MonoBehaviour
             //send out of range error message 
         }
     }
+
+
+
+
 
     void Start()
     {

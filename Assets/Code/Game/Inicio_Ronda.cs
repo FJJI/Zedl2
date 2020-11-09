@@ -37,6 +37,7 @@ public class Inicio_Ronda : MonoBehaviour
             if (i <= data.InitialPlayers)
             {
                 int fav;
+                data.defeated.Add(false);
                 if (data.fav_unit[i-1] == "none") // si no tiene unidad favorita
                 {
                     fav = Random.Range(0, 4); // entre 0 y 4

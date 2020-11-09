@@ -79,7 +79,7 @@ public class Data_Inicio_Turno : MonoBehaviour
 
     void Update()
     {
-        //gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text="Player "+playerTurn+" turn";
+        gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text="Player "+playerTurn+" turn";
     }
 
     

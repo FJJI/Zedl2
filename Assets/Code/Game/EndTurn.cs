@@ -7,14 +7,29 @@ public class EndTurn : MonoBehaviour
     // Start is called before the first frame update
     public GameObject data;
 
+    int turn;
+
     void Start()
     {
+        
+
         
     }
 
     // Update is called once per frame
     void Update()
     {
+        /*
+        turn = data.GetComponent<Data_Inicio_Turno>().playerTurn;
+        if(data.GetComponent<Data_Inicio_Turno>().players[turn-1]==PlayerPrefs.GetString("UserName"))
+        {
+            gameObject.SetActive(true);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+        */
         
     }
 

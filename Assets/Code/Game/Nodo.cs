@@ -88,76 +88,82 @@ public class Nodo : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!first)
+        int turn = data.GetComponent<Data_Inicio_Turno>().playerTurn;
+        //Debug.Log(PlayerPrefs.GetString("UserName"));
+        if(data.GetComponent<Data_Inicio_Turno>().players[turn-1]==PlayerPrefs.GetString("UserName"))
         {
-            if (data.playerTurn == owner)
+            if (!first)
             {
-                Debug.Log("Seleccionado" + this.gameObject);
-                first = this.transform.gameObject;
-            }
-            else
-            {
-                sendMessage("Not your unit!");
-            }
-        }
-        else if (first == this.transform.gameObject)
-        {
-            Debug.Log("Ya no hay first" + this.gameObject);
-            Debug.Log("Todos los nodos eliminados" + this.gameObject);
-            int auxCount = objectives.Count;
-            for (int i = 0; i < auxCount; i++)
-            {
-                RecoverPointsFromConnectionCancel(gameObject,objectives[0]);
-                DeleteConnection(gameObject,objectives[0]);
-            }
-            used_unions = 0;
-            first = null;
-        }
-
-        else if (first != this.transform.gameObject)
-        {
-            Nodo first_code = first.GetComponent<Nodo>();
-            //con este if, considero que quede al menos un "objective" en null
-            if (first_code.used_unions + 1 <= first_code.total_unions)
-            {
-                //veo la union, si ya existe, la destruyo
-                for (int i = 0; i < first_code.objectives.Count; i++)
+                if (data.playerTurn == owner)
                 {
-                    if (first_code.objectives[i] == this.gameObject)
-                    {
-                        //ya existe, elimino la flecha y libero el cupo
-                        RecoverPointsFromConnectionCancel(first,gameObject);
-                        DeleteConnection(first,gameObject);
-                        first = null;
-                        return;
-                    }
+                    Debug.Log("Seleccionado" + this.gameObject);
+                    first = this.transform.gameObject;
                 }
-                //no existe, selecciono el espacio para agregar la union
-
-                if(PermitConnection(first,gameObject))
+                else
                 {
-                    first_code.objectives.Add(gameObject);
-                    Connect(first, gameObject);
-                    PointsAfterConnection(first, gameObject);
-                    first_code.used_unions += 1;
-                    first=null;
+                    sendMessage("Not your unit!");
                 }
-
             }
-            else
+            else if (first == this.transform.gameObject)
             {
-                for (int i = 0; i < first_code.objectives.Count; i++)
+                Debug.Log("Ya no hay first" + this.gameObject);
+                Debug.Log("Todos los nodos eliminados" + this.gameObject);
+                int auxCount = objectives.Count;
+                for (int i = 0; i < auxCount; i++)
                 {
-                    if (first_code.objectives[i] == this.gameObject)
+                    RecoverPointsFromConnectionCancel(gameObject,objectives[0]);
+                    DeleteConnection(gameObject,objectives[0]);
+                }
+                used_unions = 0;
+                first = null;
+            }
+
+            else if (first != this.transform.gameObject)
+            {
+                Nodo first_code = first.GetComponent<Nodo>();
+                //con este if, considero que quede al menos un "objective" en null
+                if (first_code.used_unions + 1 <= first_code.total_unions)
+                {
+                    //veo la union, si ya existe, la destruyo
+                    for (int i = 0; i < first_code.objectives.Count; i++)
                     {
-                        //ya existe, elimino la flecha y libero el cupo
-                        RecoverPointsFromConnectionCancel(first,gameObject);
-                        DeleteConnection(first,gameObject);
-                        Debug.Log("nodo sacado" + this.gameObject);
-                        first = null;
-                        return;
+                        if (first_code.objectives[i] == this.gameObject)
+                        {
+                            //ya existe, elimino la flecha y libero el cupo
+                            RecoverPointsFromConnectionCancel(first,gameObject);
+                            DeleteConnection(first,gameObject);
+                            first = null;
+                            return;
+                        }
                     }
-                    else
+                    //no existe, selecciono el espacio para agregar la union
+
+                    if(PermitConnection(first,gameObject))
+                    {
+                        first_code.objectives.Add(gameObject);
+                        Connect(first, gameObject);
+                        PointsAfterConnection(first, gameObject);
+                        first_code.used_unions += 1;
+                        first=null;
+                    }
+
+                }
+                else
+                {
+                    int deleteValidation = 0;
+                    for (int i = 0; i < first_code.objectives.Count; i++)
+                    {
+                        if (first_code.objectives[i] == this.gameObject)
+                        {
+                            //ya existe, elimino la flecha y libero el cupo
+                            RecoverPointsFromConnectionCancel(first,gameObject);
+                            DeleteConnection(first,gameObject);
+                            Debug.Log("nodo sacado" + this.gameObject);
+                            deleteValidation=1;
+                            first = null;
+                        }
+                    }
+                    if(deleteValidation==0)
                     {
                         Debug.Log("This node can´t have more nodes");
                         sendMessage("No connections left!");

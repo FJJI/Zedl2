@@ -21,7 +21,7 @@ public class Data_Inicio_Turno : MonoBehaviour
     public int InitialPlayers;  // para saber la cantidad de la player para armar la partida, los cambios de turno y saber cuando alguien pierde
     public List<bool> defeated = new List<bool> { false, false, false, false }; 
     public List<string> fav_unit = new List<string> { "none", "none", "none", "none" };
-    public List<string> players = new List<string> { "papa", "pepe", "pipi", "popo" };
+    public List<string> players = new List<string> { "eivelez", "perro", "none", "none" };
 
 // Los Nodos + la flecha 
 public GameObject Normal;
@@ -45,6 +45,7 @@ public GameObject Normal;
         {
             Destroy(gameObject);
         }
+        players = new List<string> { "MRFJJI", "Gamma994" };
     }
 
     [Obsolete]
@@ -67,6 +68,7 @@ public GameObject Normal;
             Debug.LogError(args.DatabaseError.Message);
             return;
         }
+        Debug.LogWarning("ASDASDASDASD");
         DataSnapshot msg = args.Snapshot;
         IDictionary dataPartida = (IDictionary)msg.Value;
         Debug.Log(dataPartida["turn"]);

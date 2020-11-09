@@ -3,7 +3,11 @@ guid: ae18834082dfbc546b6ad27e0bc9ad53
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - halo: {instanceID: 0}
+  - sprite: {instanceID: 0}
+  - msgGameObject: {fileID: 1049868277881593281, guid: 12c65a67f962b2b459d1489ccd0f971d,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

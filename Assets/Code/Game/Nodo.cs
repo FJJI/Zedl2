@@ -77,6 +77,7 @@ public class Nodo : MonoBehaviour
     void fadeMsg()
     {
         msgGameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().faceColor = new Color32(0, 0, 0, (byte)fade);
+        
     }
 
     void sendMessage(string message)
@@ -93,6 +94,10 @@ public class Nodo : MonoBehaviour
             {
                 Debug.Log("Seleccionado" + this.gameObject);
                 first = this.transform.gameObject;
+            }
+            else
+            {
+                sendMessage("Not your unit!");
             }
         }
         else if (first == this.transform.gameObject)
@@ -155,7 +160,7 @@ public class Nodo : MonoBehaviour
                     else
                     {
                         Debug.Log("This node can´t have more nodes");
-                        //sendMessage("No connections left!");
+                        sendMessage("No connections left!");
                     }
                 }
             }
@@ -230,6 +235,7 @@ public class Nodo : MonoBehaviour
         }
         else
         {
+            sendMessage("Too far...");
             return false;
         }
     }

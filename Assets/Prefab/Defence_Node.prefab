@@ -390,4 +390,5 @@ MonoBehaviour:
   healingFactor: 0
   dmgFactor: 0
   identifier: 0
-  msgGameObject: {fileID: 0}
+  msgGameObject: {fileID: 1049868277881593281, guid: 12c65a67f962b2b459d1489ccd0f971d,
+    type: 3}

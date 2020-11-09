@@ -31,6 +31,7 @@ public class Data_Inicio_Turno : MonoBehaviour
 
     public List<GameObject> nodos;
     public List<NodoClass> nodosListos;
+    string jsonNodos;
 
     void Awake()  // Hacemos que la esta data exista en lapartida y de ser necesario, desde el room para su trata con la informacion
     {
@@ -43,9 +44,16 @@ public class Data_Inicio_Turno : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    [Obsolete]
+    private void Start()
+    {
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
+
+        //dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("players").ChildChanged += HandlePlayerEdited;
     }
 
 
@@ -55,12 +63,14 @@ public class Data_Inicio_Turno : MonoBehaviour
         {
             NodoClass nc = new NodoClass(nodos[i - 1]);
             nodosListos.Add(nc);
-
-
         }
-        string jsonNodos = JsonUtility.ToJson(nodosListos);
+        jsonNodos = JsonUtility.ToJson(nodosListos);
         await reference.Child("rooms").Child(matchID.ToString()).SetRawJsonValueAsync(jsonNodos);
         Debug.Log("Nodos Guardados");
+
+        DataClass dc = new DataClass(data);
+        string jsonData = JsonUtility.ToJson(dc);
+        await reference.Child("rooms").Child(matchID.ToString()).SetRawJsonValueAsync(jsonData);
     }
 }
 

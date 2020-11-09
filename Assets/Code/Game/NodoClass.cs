@@ -8,11 +8,11 @@ public class NodoClass // En teoria Firebase puede guardar clases
     public float posy;
     public float posz;
 
-    public int type;
-    public int points;
+    public int owner;
     public int total_unions;
     public int used_unions;
-    public int owner;
+    public int type;
+    public int points;
     public int healingFactor;
     public int dmgFactor;
     public int identifier;

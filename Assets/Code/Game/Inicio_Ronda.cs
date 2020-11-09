@@ -55,6 +55,7 @@ public class Inicio_Ronda : MonoBehaviour
             }
             nuevo_nodo.GetComponent<Nodo>().identifier = i - 1;
             nuevo_nodo.GetComponent<Nodo>().points = 50;
+            data.nodos.Add(nuevo_nodo);
         }
         data.turn = 1; //una vez iniciado todo, hacemos que parta el juego con el 1° turno
         data.playerTurn++;

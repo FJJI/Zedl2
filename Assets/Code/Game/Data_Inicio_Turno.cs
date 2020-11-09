@@ -19,7 +19,7 @@ public class Data_Inicio_Turno : MonoBehaviour
     public int turn;
     public int playerTurn;  // para saber a quien le damos el beneficio de jugar, sino poner una nota
     public int InitialPlayers;  // para saber la cantidad de la player para armar la partida, los cambios de turno y saber cuando alguien pierde
-    public List<bool> defeated;
+    public List<bool> defeated = new List<bool> { false, false, false, false }; 
     public List<string> fav_unit = new List<string> { "none", "none", "none", "none" };
     public List<string> players = new List<string> { "none", "none", "none", "none" };
 
@@ -61,6 +61,7 @@ public GameObject Normal;
 
     private void HandleChangeGame(object sender, ChildChangedEventArgs args)
     {
+        
         if (args.DatabaseError != null)
         {
             Debug.LogError(args.DatabaseError.Message);
@@ -68,13 +69,15 @@ public GameObject Normal;
         }
         DataSnapshot msg = args.Snapshot;
         IDictionary dataPartida = (IDictionary)msg.Value;
+        Debug.Log(dataPartida["turn"]);
         turn = int.Parse(dataPartida["turn"].ToString());
         playerTurn = int.Parse(dataPartida["playerTurn"].ToString());
         InitialPlayers = int.Parse(dataPartida["InitialPlayers"].ToString());
         for (int i = 0; i < InitialPlayers; i++)
         {
-
+            defeated[i] = bool.Parse(dataPartida["defeated"[i]].ToString());
         }
+        
     }
 
     public async void SaveData()

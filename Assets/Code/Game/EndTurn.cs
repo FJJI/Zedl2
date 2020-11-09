@@ -29,14 +29,30 @@ public class EndTurn : MonoBehaviour
             {
                 data.GetComponent<Data_Inicio_Turno>().playerTurn=1;
             }
-            Debug.Log(data.GetComponent<Data_Inicio_Turno>().playerTurn-1);
             if (!(data.GetComponent<Data_Inicio_Turno>().defeated[data.GetComponent<Data_Inicio_Turno>().playerTurn-1]))
             {
+                ExecuteChanges();
                 data.GetComponent<Data_Inicio_Turno>().SaveData();
                 break;
             }
         }
         
+        
+    }
+
+    void ExecuteChanges()
+    {
+        for(int i = 0; i<data.GetComponent<Data_Inicio_Turno>().nodos.Count;i++)
+        {
+            data.GetComponent<Data_Inicio_Turno>().nodos[i].GetComponent<Nodo>(). DefinePowerFactors();
+        }
+        for(int i = 0; i<data.GetComponent<Data_Inicio_Turno>().nodos.Count;i++)
+        {
+            for(int j = 0; j < data.GetComponent<Data_Inicio_Turno>().nodos[i].GetComponent<Nodo>().used_unions;j++)
+            {
+                data.GetComponent<Data_Inicio_Turno>().nodos[i].GetComponent<Nodo>().AtackHealUnit(data.GetComponent<Data_Inicio_Turno>().nodos[i].GetComponent<Nodo>().objectives[j]);
+            }
+        }
         
     }
 }

@@ -240,6 +240,33 @@ public class Nodo : MonoBehaviour
         }
     }
 
+    public void DefinePowerFactors() //this function should be executed when ending the turn before doing the healings/damages, after all connections and points adjustments are done
+    {
+        healingFactor = (int)Mathf.Sqrt(points);
+        dmgFactor = (int)Mathf.Sqrt(points);
+        if (type == 1) { dmgFactor *= 2; }
+        else if (type == 2) { healingFactor *= 2; }
+    }
+
+    public void AtackHealUnit(GameObject objective) //remeber to DefinePowerFactors before atking/healing, this function autoconvert the unit owner when defeated
+    {
+        Nodo senderAttributes = gameObject.GetComponent<Nodo>();
+        Nodo objectiveAttributes = objective.GetComponent<Nodo>();
+        if (senderAttributes.owner == objectiveAttributes.owner)
+        {
+            objectiveAttributes.points = Mathf.Min(100, objectiveAttributes.points + senderAttributes.healingFactor);
+        }
+        else
+        {
+            objectiveAttributes.points -= senderAttributes.dmgFactor;
+            if (objectiveAttributes.points < 0)
+            {
+                objectiveAttributes.points *= -1;
+                objectiveAttributes.owner = senderAttributes.owner;
+            }
+        }
+    }
+
 
     void Start()
     {

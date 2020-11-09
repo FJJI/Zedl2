@@ -51,11 +51,27 @@ public class RoomScript : MonoBehaviour
         dbInstance.GetReference("rooms").Child(roomId).Child("messages").ChildAdded += HandleMessageAdded;
         dbInstance.GetReference("rooms").Child(roomId).Child("players").ChildRemoved += HandlePlayerRemoved;
         dbInstance.GetReference("rooms").Child(roomId).Child("players").ChildChanged += HandlePlayerEdited;
+        dbInstance.GetReference("rooms").Child(roomId).Child("start").ValueChanged += HandleStartGame;
         sendButton.onClick.AddListener(() => SenderChat(chatInput.text));
         leaveButton.onClick.AddListener(() => LeavePress());
         readyButton.onClick.AddListener(() => ReadyPress());
         startButton.onClick.AddListener(() => StartGame());
         backProfileButton.onClick.AddListener(() => HideProfileCanvas());
+    }
+
+    void HandleStartGame(object sender, ValueChangedEventArgs args)
+    {
+        if (args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+        DataSnapshot msg = args.Snapshot;
+        string status = msg.Value.ToString();
+        if (status == "true")
+        {
+            SceneManager.LoadScene("Game");
+        }
     }
 
     void HandlePlayerEdited(object sender, ChildChangedEventArgs args)
@@ -255,6 +271,7 @@ public class RoomScript : MonoBehaviour
             Message.text = errorMessage;
             return;
         }
+        await reference.Child("rooms").Child(roomId).Child("start").SetValueAsync("true");
         SceneManager.LoadScene("Game");
     }
 

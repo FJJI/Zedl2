@@ -55,7 +55,7 @@ public class CreateRoom : MonoBehaviour
         }
         Debug.Log("creando room");
         PlayerPrefs.SetString("Room", roomId.ToString());
-        RoomClass room = new RoomClass(PlayerPrefs.GetString("UID"), players);
+        RoomClass room = new RoomClass(PlayerPrefs.GetString("UID"), players, "false");
         string json = JsonUtility.ToJson(room);
         await reference.Child("rooms").Child(roomId.ToString()).SetRawJsonValueAsync(json);
         Debug.Log("Room creada");

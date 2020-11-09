@@ -21,10 +21,10 @@ public class Data_Inicio_Turno : MonoBehaviour
     public int InitialPlayers;  // para saber la cantidad de la player para armar la partida, los cambios de turno y saber cuando alguien pierde
     public List<bool> defeated;
     public List<string> fav_unit = new List<string> { "none", "none", "none", "none" };
-    public List<string> players;
+    public List<string> players = new List<string> { "none", "none", "none", "none" };
 
-    // Los Nodos + la flecha 
-    public GameObject Normal;
+// Los Nodos + la flecha 
+public GameObject Normal;
     public GameObject Extra;
     public GameObject Ataque;
     public GameObject Defensa;
@@ -54,11 +54,28 @@ public class Data_Inicio_Turno : MonoBehaviour
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
 
-        //dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("players").ChildChanged += HandlePlayerEdited;
+        dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").ChildChanged += HandleChangeGame;
 
         
     }
 
+    private void HandleChangeGame(object sender, ChildChangedEventArgs args)
+    {
+        if (args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+        DataSnapshot msg = args.Snapshot;
+        IDictionary dataPartida = (IDictionary)msg.Value;
+        turn = int.Parse(dataPartida["turn"].ToString());
+        playerTurn = int.Parse(dataPartida["playerTurn"].ToString());
+        InitialPlayers = int.Parse(dataPartida["InitialPlayers"].ToString());
+        for (int i = 0; i < InitialPlayers; i++)
+        {
+
+        }
+    }
 
     public async void SaveData()
     {
@@ -79,7 +96,7 @@ public class Data_Inicio_Turno : MonoBehaviour
 
     void Update()
     {
-        //gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text="Player "+playerTurn+" turn";
+        gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text="Player "+playerTurn+" turn";
     }
 
     

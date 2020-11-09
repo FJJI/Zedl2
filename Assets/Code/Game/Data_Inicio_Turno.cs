@@ -64,7 +64,7 @@ public class Data_Inicio_Turno : MonoBehaviour
             Debug.Log("Nodo" + i);
             Debug.Log(nodos[i - 1].name);
             NodoClass nc = new NodoClass(nodos[i - 1]);
-            Debug.Log(nc+" iden "+nc.identifier + " obj " + nc.objectives + " type " +nc.type);
+            
             nodosListos.Add(nc);
         }
         SendData();

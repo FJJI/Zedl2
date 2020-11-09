@@ -25,7 +25,8 @@ public class Inicio_Ronda : MonoBehaviour
         GameObject Extra = data.Extra;
         GameObject Ataque = data.Ataque;
         GameObject Defensa = data.Defensa;
-        List<GameObject> nodes = new List<GameObject> {Normal,Extra,Ataque,Defensa}; // Ajustar por el que se toma en favoritos 
+        List<GameObject> nodes = new List<GameObject> {Normal, Ataque, Defensa,Extra}; // Ajustar por el que se toma en favoritos 
+        // Tipo 0 es normal, 1 es warrior, 2 es defensa, 3 es nodo extra
 
         List<int> positionsx = new List<int> {7,-7, 7,-7, 4,4,-4,-4,0, 0};
         List<int> positionsy = new List<int> {3,-3,-3, 3,-2,2,-2, 2,3,-3};
@@ -38,7 +39,7 @@ public class Inicio_Ronda : MonoBehaviour
                 int fav;
                 if (data.fav_unit[i-1] == "none") // si no tiene unidad favorita
                 {
-                    fav = Random.Range(1, 4); // entre 1 y 4
+                    fav = Random.Range(0, 4); // entre 0 y 4
                 }
                 else
                 {
@@ -46,7 +47,13 @@ public class Inicio_Ronda : MonoBehaviour
                 }
                 nuevo_nodo = Instantiate(nodes[fav], new Vector3(positionsx[i-1], positionsy[i-1], -1), Quaternion.identity);
                 nuevo_nodo.GetComponent<Nodo>().owner = i;
-                
+                nuevo_nodo.GetComponent<Nodo>().type = fav;
+                if (fav == 3)
+                {
+                    nuevo_nodo.GetComponent<Nodo>().total_unions = 3;
+                }
+
+
             }
             else // si ya estan los nodos iniciales
             {

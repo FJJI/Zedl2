@@ -79,8 +79,7 @@ public class Inicio_Ronda : MonoBehaviour
         GameObject arrowObject = Instantiate(data.Flecha, new Vector3(middleX, middleY, 0), Quaternion.identity);
         arrowObject.transform.Rotate(0, 0, angle - 90);
         arrowObject.transform.localScale = new Vector3(0.3f, 0.15f * colliderDistance, 1);
-        int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
-        sender.GetComponent<Nodo>().unions[index] = arrowObject;
+        sender.GetComponent<Nodo>().unions.Add(arrowObject);
     }
 
     void DefinePowerFactors(GameObject unit) //this function should be executed when ending the turn before doing the healings/damages, after all connections and points adjustments are done

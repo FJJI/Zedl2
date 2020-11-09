@@ -58,7 +58,6 @@ public GameObject Normal;
 
         
     }
-
     private void HandleChangeGame(object sender, ChildChangedEventArgs args)
     {
         

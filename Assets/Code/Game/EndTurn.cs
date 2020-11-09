@@ -1,43 +1,61 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class EndTurn : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject data;
 
+    int turn;
+
+    bool activeButton;
+
     void Start()
     {
+        
+
         
     }
 
     // Update is called once per frame
     void Update()
     {
+        turn = data.GetComponent<Data_Inicio_Turno>().playerTurn;
+        if(data.GetComponent<Data_Inicio_Turno>().players[turn-1]==PlayerPrefs.GetString("UserName"))
+        {
+            activeButton=true;
+            gameObject.GetComponent<TextMeshProUGUI>().text = "Next Turn";
+        }
+        else
+        {
+            activeButton=false;
+            gameObject.GetComponent<TextMeshProUGUI>().text = "Waiting for player";
+        }
         
     }
 
     void OnMouseDown()
     {
-        
-        data.GetComponent<Data_Inicio_Turno>().turn++;
-        while(true)
+        if(activeButton)
         {
-            data.GetComponent<Data_Inicio_Turno>().playerTurn++;
-            if(data.GetComponent<Data_Inicio_Turno>().playerTurn>data.GetComponent<Data_Inicio_Turno>().InitialPlayers)
+            data.GetComponent<Data_Inicio_Turno>().turn++;
+            while(true)
             {
-                data.GetComponent<Data_Inicio_Turno>().playerTurn=1;
-            }
-            if (!(data.GetComponent<Data_Inicio_Turno>().defeated[data.GetComponent<Data_Inicio_Turno>().playerTurn-1]))
-            {
-                ExecuteChanges();
-                data.GetComponent<Data_Inicio_Turno>().SaveData();
-                break;
+                data.GetComponent<Data_Inicio_Turno>().playerTurn++;
+                if(data.GetComponent<Data_Inicio_Turno>().playerTurn>data.GetComponent<Data_Inicio_Turno>().InitialPlayers)
+                {
+                    data.GetComponent<Data_Inicio_Turno>().playerTurn=1;
+                }
+                if (!(data.GetComponent<Data_Inicio_Turno>().defeated[data.GetComponent<Data_Inicio_Turno>().playerTurn-1]))
+                {
+                    ExecuteChanges();
+                    data.GetComponent<Data_Inicio_Turno>().SaveData();
+                    break;
+                }
             }
         }
-        
-        
     }
 
     void ExecuteChanges()

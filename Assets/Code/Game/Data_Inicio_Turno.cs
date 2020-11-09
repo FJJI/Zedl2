@@ -60,34 +60,26 @@ public class Data_Inicio_Turno : MonoBehaviour
     }
 
 
-    public void SaveData()
+    public async void SaveData()
     {
-        for (int i = 1; i <= nodos.Count; i++) // pongo los nodos en formato para guardar
+        for (int i = 1; i <= nodos.Count; i++) // pongo los nodos en formato para guardars
         {
-            Debug.Log("Nodo" + i);
-            Debug.Log(nodos[i - 1].name);
+            Debug.Log("Nodo" + (i-1));
             NodoClass nc = new NodoClass(nodos[i - 1]);
-            
-            nodosListos.Add(nc);
+            string ident = nc.identifier.ToString();
+            jsonNodos = JsonUtility.ToJson(nc);
+            await reference.Child("rooms").Child(matchID.ToString()).Child("nodos").Child(ident).SetRawJsonValueAsync(jsonNodos);
         }
-        SendData();
-    }
-
-    public async void SendData()
-    {
-        jsonNodos = JsonUtility.ToJson(nodosListos);
-        await reference.Child("rooms").Child(matchID.ToString()).SetRawJsonValueAsync(jsonNodos);
-        Debug.Log("Nodos Guardados");
-        /*
         DataClass dc = new DataClass(data);
         string jsonData = JsonUtility.ToJson(dc);
-        await reference.Child("rooms").Child(matchID.ToString()).SetRawJsonValueAsync(jsonData);
-        */
+        await reference.Child("rooms").Child(matchID.ToString()).Child("datapartida").SetRawJsonValueAsync(jsonData);
+        Debug.Log("data segura");
     }
+
 
     void Update()
     {
-        gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text="Player "+playerTurn+" turn";
+        //gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text="Player "+playerTurn+" turn";
     }
 
     

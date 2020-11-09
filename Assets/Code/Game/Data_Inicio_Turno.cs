@@ -7,6 +7,7 @@ using Firebase.Unity.Editor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
+using TMPro;
 
 public class Data_Inicio_Turno : MonoBehaviour
 {
@@ -54,6 +55,8 @@ public class Data_Inicio_Turno : MonoBehaviour
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
 
         //dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("players").ChildChanged += HandlePlayerEdited;
+
+        
     }
 
 
@@ -81,6 +84,13 @@ public class Data_Inicio_Turno : MonoBehaviour
         await reference.Child("rooms").Child(matchID.ToString()).SetRawJsonValueAsync(jsonData);
         */
     }
+
+    void Update()
+    {
+        gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text="Player "+playerTurn+" turn";
+    }
+
+    
 }
 
 

@@ -25,7 +25,8 @@ public class Inicio_Ronda : MonoBehaviour
         GameObject Extra = data.Extra;
         GameObject Ataque = data.Ataque;
         GameObject Defensa = data.Defensa;
-        List<GameObject> nodes = new List<GameObject> {Normal,Extra,Ataque,Defensa}; // Ajustar por el que se toma en favoritos 
+        List<GameObject> nodes = new List<GameObject> {Normal, Ataque, Defensa,Extra}; // Ajustar por el que se toma en favoritos 
+        // Tipo 0 es normal, 1 es warrior, 2 es defensa, 3 es nodo extra
 
         List<int> positionsx = new List<int> {7,-7, 7,-7, 4,4,-4,-4,0, 0};
         List<int> positionsy = new List<int> {3,-3,-3, 3,-2,2,-2, 2,3,-3};
@@ -36,9 +37,10 @@ public class Inicio_Ronda : MonoBehaviour
             if (i <= data.InitialPlayers)
             {
                 int fav;
+                data.defeated.Add(false);
                 if (data.fav_unit[i-1] == "none") // si no tiene unidad favorita
                 {
-                    fav = Random.Range(1, 4); // entre 1 y 4
+                    fav = Random.Range(0, 4); // entre 0 y 4
                 }
                 else
                 {
@@ -46,19 +48,31 @@ public class Inicio_Ronda : MonoBehaviour
                 }
                 nuevo_nodo = Instantiate(nodes[fav], new Vector3(positionsx[i-1], positionsy[i-1], -1), Quaternion.identity);
                 nuevo_nodo.GetComponent<Nodo>().owner = i;
-                
+                nuevo_nodo.GetComponent<Nodo>().type = fav;
+                if (fav == 3)
+                {
+                    nuevo_nodo.GetComponent<Nodo>().total_unions = 3;
+                }
+
+
             }
             else // si ya estan los nodos iniciales
             {
-                nuevo_nodo = Instantiate(nodes[Random.Range(0, 4)], new Vector3(positionsx[i-1], positionsy[i-1], -1), Quaternion.identity);
+                int type = Random.Range(0, 4);
+                nuevo_nodo = Instantiate(nodes[type], new Vector3(positionsx[i-1], positionsy[i-1], -1), Quaternion.identity);
                 nuevo_nodo.GetComponent<Nodo>().owner = 0;
+                nuevo_nodo.GetComponent<Nodo>().type = type;
             }
             nuevo_nodo.GetComponent<Nodo>().identifier = i - 1;
             nuevo_nodo.GetComponent<Nodo>().points = 50;
+            nuevo_nodo.GetComponent<Nodo>().msgGameObject = GameObject.Find("MSGcontainer");
+            data.nodos.Add(nuevo_nodo);
         }
         data.turn = 1; //una vez iniciado todo, hacemos que parta el juego con el 1° turno
         data.playerTurn++;
 
+        // Probando la funcion de SaveData()
+        data.SaveData();
     }
 
     void Connect(GameObject sender, GameObject objective)//be sure to add the objective to list before using this function
@@ -79,8 +93,7 @@ public class Inicio_Ronda : MonoBehaviour
         GameObject arrowObject = Instantiate(data.Flecha, new Vector3(middleX, middleY, 0), Quaternion.identity);
         arrowObject.transform.Rotate(0, 0, angle - 90);
         arrowObject.transform.localScale = new Vector3(0.3f, 0.15f * colliderDistance, 1);
-        int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
-        sender.GetComponent<Nodo>().unions[index] = arrowObject;
+        sender.GetComponent<Nodo>().unions.Add(arrowObject);
     }
 
     void DefinePowerFactors(GameObject unit) //this function should be executed when ending the turn before doing the healings/damages, after all connections and points adjustments are done

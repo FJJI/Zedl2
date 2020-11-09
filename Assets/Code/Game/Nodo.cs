@@ -28,6 +28,7 @@ public class Nodo : MonoBehaviour
     //por si necesitamos alguna data mas, toda debiese existir aca
     Data_Inicio_Turno data;
 
+    /*
     void AddEmpty() // esto esta para cuando se crean, no tener problemas de que me salgo de la lista
     {
         for (int i = 0; i < total_unions; i++)
@@ -36,6 +37,8 @@ public class Nodo : MonoBehaviour
             unions.Add(null);
         }
     }
+    */
+
 
     void ChangeColor()
     {
@@ -74,6 +77,7 @@ public class Nodo : MonoBehaviour
     void fadeMsg()
     {
         msgGameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().faceColor = new Color32(0, 0, 0, (byte)fade);
+        
     }
 
     void sendMessage(string message)
@@ -84,91 +88,84 @@ public class Nodo : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!first)
+        int turn = data.GetComponent<Data_Inicio_Turno>().playerTurn;
+        //Debug.Log(PlayerPrefs.GetString("UserName"));
+        if(data.GetComponent<Data_Inicio_Turno>().players[turn-1]==PlayerPrefs.GetString("UserName"))
         {
-            if (data.playerTurn == owner)
+            if (!first)
             {
-                Debug.Log("Seleccionado" + this.gameObject);
-                first = this.transform.gameObject;
+                if (data.playerTurn == owner)
+                {
+                    Debug.Log("Seleccionado" + this.gameObject);
+                    first = this.transform.gameObject;
+                }
+                else
+                {
+                    sendMessage("Not your unit!");
+                }
             }
-        }
-        else if (first == this.transform.gameObject)
-        {
-            Debug.Log("Ya no hay first" + this.gameObject);
-            Debug.Log("Todos los nodos eliminados" + this.gameObject);
-            for (int i = 0; i < total_unions; i++)
+            else if (first == this.transform.gameObject)
             {
-                if (objectives[i] != null)
+                Debug.Log("Ya no hay first" + this.gameObject);
+                Debug.Log("Todos los nodos eliminados" + this.gameObject);
+                int auxCount = objectives.Count;
+                for (int i = 0; i < auxCount; i++)
                 {
-                    RecoverPointsFromConnectionCancel(gameObject,objectives[i]);
-                    DeleteConnection(gameObject,objectives[i]);
+                    RecoverPointsFromConnectionCancel(gameObject,objectives[0]);
+                    DeleteConnection(gameObject,objectives[0]);
                 }
-                /*
-                try
-                {
-                    DeleteConnection(gameObject,objectives[i]);
-                }
-                catch { }
-                */
+                used_unions = 0;
+                first = null;
             }
-            used_unions = 0;
-            first = null;
-        }
 
-        else if (first != this.transform.gameObject)
-        {
-            Nodo first_code = first.GetComponent<Nodo>();
-            //con este if, considero que quede al menos un "objective" en null
-            if (first_code.used_unions + 1 <= first_code.total_unions)
+            else if (first != this.transform.gameObject)
             {
-                //veo la union, si ya existe, la destruyo
-                for (int i = 0; i < first_code.total_unions; i++)
+                Nodo first_code = first.GetComponent<Nodo>();
+                //con este if, considero que quede al menos un "objective" en null
+                if (first_code.used_unions + 1 <= first_code.total_unions)
                 {
-                    if (first_code.objectives[i] == this.gameObject)
+                    //veo la union, si ya existe, la destruyo
+                    for (int i = 0; i < first_code.objectives.Count; i++)
                     {
-                        //ya existe, elimino la flecha y libero el cupo
-                        RecoverPointsFromConnectionCancel(first,gameObject);
-                        DeleteConnection(first,gameObject);
-                        first = null;
-                        return;
-                    }
-                }
-                //no existe, selecciono el espacio para agregar la union
-                for (int i = 0; i < first_code.total_unions; i++)
-                {
-                    // cuando encontremos uno vacio lo usaremos
-                    if (first_code.objectives[i] == null)
-                    {
-                        if(PermitConnection(first,gameObject))
+                        if (first_code.objectives[i] == this.gameObject)
                         {
-                            first_code.objectives[i] = this.gameObject;
-                            Connect(first, gameObject);
-                            PointsAfterConnection(first, gameObject);
-                            first_code.used_unions += 1;
-                            first=null;
-                            break;
+                            //ya existe, elimino la flecha y libero el cupo
+                            RecoverPointsFromConnectionCancel(first,gameObject);
+                            DeleteConnection(first,gameObject);
+                            first = null;
+                            return;
                         }
-                        
                     }
-                }
+                    //no existe, selecciono el espacio para agregar la union
 
-            }
-            else
-            {
-                for (int i = 0; i < first_code.total_unions; i++)
-                {
-                    if (first_code.objectives[i] == this.gameObject)
+                    if(PermitConnection(first,gameObject))
                     {
-                        //ya existe, elimino la flecha y libero el cupo
-                        RecoverPointsFromConnectionCancel(first,gameObject);
-                        DeleteConnection(first,gameObject);
-                        Debug.Log("nodo sacado" + this.gameObject);
-                        first = null;
-                        return;
+                        first_code.objectives.Add(gameObject);
+                        Connect(first, gameObject);
+                        PointsAfterConnection(first, gameObject);
+                        first_code.used_unions += 1;
+                        first=null;
                     }
-                    else
+
+                }
+                else
+                {
+                    int deleteValidation = 0;
+                    for (int i = 0; i < first_code.objectives.Count; i++)
                     {
-                        //Debug.Log("This node can´t have more nodes");
+                        if (first_code.objectives[i] == this.gameObject)
+                        {
+                            //ya existe, elimino la flecha y libero el cupo
+                            RecoverPointsFromConnectionCancel(first,gameObject);
+                            DeleteConnection(first,gameObject);
+                            Debug.Log("nodo sacado" + this.gameObject);
+                            deleteValidation=1;
+                            first = null;
+                        }
+                    }
+                    if(deleteValidation==0)
+                    {
+                        Debug.Log("This node can´t have more nodes");
                         sendMessage("No connections left!");
                     }
                 }
@@ -200,8 +197,7 @@ public class Nodo : MonoBehaviour
         GameObject arrowObject = Instantiate(data.Flecha, new Vector3(middleX, middleY, 0), Quaternion.identity);
         arrowObject.transform.Rotate(0, 0, angle - 90);
         arrowObject.transform.localScale = new Vector3(0.3f, 0.15f * colliderDistance, 1);
-        int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
-        sender.GetComponent<Nodo>().unions[index] = arrowObject;
+        sender.GetComponent<Nodo>().unions.Add(arrowObject);
     }
 
     void PointsAfterConnection(GameObject sender, GameObject objective)// use only with values pre validated by PermitConnection, reduce sender points by stretching concept
@@ -228,8 +224,8 @@ public class Nodo : MonoBehaviour
     {
         int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
         Destroy(sender.GetComponent<Nodo>().unions[index]);
-        sender.GetComponent<Nodo>().unions[index] = null;
-        sender.GetComponent<Nodo>().objectives[index] = null;
+        sender.GetComponent<Nodo>().unions.RemoveAt(index);
+        sender.GetComponent<Nodo>().objectives.Remove(objective);
         sender.GetComponent<Nodo>().used_unions--;
     }
 
@@ -245,7 +241,35 @@ public class Nodo : MonoBehaviour
         }
         else
         {
+            sendMessage("Too far...");
             return false;
+        }
+    }
+
+    public void DefinePowerFactors() //this function should be executed when ending the turn before doing the healings/damages, after all connections and points adjustments are done
+    {
+        healingFactor = (int)Mathf.Sqrt(points);
+        dmgFactor = (int)Mathf.Sqrt(points);
+        if (type == 1) { dmgFactor *= 2; }
+        else if (type == 2) { healingFactor *= 2; }
+    }
+
+    public void AtackHealUnit(GameObject objective) //remeber to DefinePowerFactors before atking/healing, this function autoconvert the unit owner when defeated
+    {
+        Nodo senderAttributes = gameObject.GetComponent<Nodo>();
+        Nodo objectiveAttributes = objective.GetComponent<Nodo>();
+        if (senderAttributes.owner == objectiveAttributes.owner)
+        {
+            objectiveAttributes.points = Mathf.Min(100, objectiveAttributes.points + senderAttributes.healingFactor);
+        }
+        else
+        {
+            objectiveAttributes.points -= senderAttributes.dmgFactor;
+            if (objectiveAttributes.points < 0)
+            {
+                objectiveAttributes.points *= -1;
+                objectiveAttributes.owner = senderAttributes.owner;
+            }
         }
     }
 
@@ -253,7 +277,6 @@ public class Nodo : MonoBehaviour
     void Start()
     {
         data = GameObject.Find("Data").GetComponent<Data_Inicio_Turno>();
-        AddEmpty();
     }
 
     void Update()

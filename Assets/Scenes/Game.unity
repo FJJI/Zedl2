@@ -264,6 +264,7 @@ MonoBehaviour:
   Ataque: {fileID: 40449514753517188, guid: ed8a8ef6db938494897b3f15e84972a5, type: 3}
   Defensa: {fileID: 6779469752411818588, guid: 1473ab668ea0f814988532a499d7b85f, type: 3}
   Flecha: {fileID: 3853505329974284110, guid: c9a5702c5eeaf224e909ad31d1e9f6cc, type: 3}
+  nodos: []
 --- !u!4 &1568316153
 Transform:
   m_ObjectHideFlags: 0
@@ -396,7 +397,7 @@ PrefabInstance:
     - target: {fileID: 1049868278086976127, guid: 12c65a67f962b2b459d1489ccd0f971d,
         type: 3}
       propertyPath: m_text
-      value: test
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 12c65a67f962b2b459d1489ccd0f971d, type: 3}

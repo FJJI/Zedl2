@@ -57,8 +57,10 @@ public class Inicio_Ronda : MonoBehaviour
             }
             else // si ya estan los nodos iniciales
             {
-                nuevo_nodo = Instantiate(nodes[Random.Range(0, 4)], new Vector3(positionsx[i-1], positionsy[i-1], -1), Quaternion.identity);
+                int type = Random.Range(0, 4);
+                nuevo_nodo = Instantiate(nodes[type], new Vector3(positionsx[i-1], positionsy[i-1], -1), Quaternion.identity);
                 nuevo_nodo.GetComponent<Nodo>().owner = 0;
+                nuevo_nodo.GetComponent<Nodo>().type = type;
             }
             nuevo_nodo.GetComponent<Nodo>().identifier = i - 1;
             nuevo_nodo.GetComponent<Nodo>().points = 50;

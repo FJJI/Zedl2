@@ -151,11 +151,13 @@ MonoBehaviour:
   used_unions: 0
   type: 0
   objectives: []
+  unions: []
   halo: {fileID: 1169268234281552988}
   sprite: {fileID: 1169268234281552984}
+  points: 50
   healingFactor: 0
   dmgFactor: 0
-  points: 0
+  identifier: 0
   msgGameObject: {fileID: 0}
 --- !u!1 &1169268235496552619
 GameObject:

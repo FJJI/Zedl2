@@ -100,23 +100,21 @@ public class Nodo : MonoBehaviour
             {
                 if (objectives[i] != null)
                 {
-                    int pointsToAdd = (int)(100f * Vector2.Distance(transform.position, objectives[i].transform.position) / Camera.main.GetComponent<CameraSize>().camWidth);
-                    if (points + pointsToAdd >= 100)
-                    {
-                        points = 100;
-                    }
-                    else
-                    {
-                        points += pointsToAdd;
-                    }
+                    RecoverPointsFromConnectionCancel(gameObject,objectives[i]);
+                    DeleteConnection(gameObject,objectives[i]);
                 }
-                objectives[i] = null;
-                try { Destroy(unions[i].gameObject); } catch { }
-                unions[i] = null;
+                /*
+                try
+                {
+                    DeleteConnection(gameObject,objectives[i]);
+                }
+                catch { }
+                */
             }
             used_unions = 0;
             first = null;
         }
+
         else if (first != this.transform.gameObject)
         {
             Nodo first_code = first.GetComponent<Nodo>();
@@ -129,35 +127,28 @@ public class Nodo : MonoBehaviour
                     if (first_code.objectives[i] == this.gameObject)
                     {
                         //ya existe, elimino la flecha y libero el cupo
-                        first_code.used_unions -= 1;
-                        int pointsToAdd = (int)(100f * Vector2.Distance(gameObject.transform.position, first_code.transform.position) / Camera.main.GetComponent<CameraSize>().camWidth);
-                        if (first_code.points + pointsToAdd >= 100)
-                        {
-                            first_code.points = 100;
-                        }
-                        else
-                        {
-                            first_code.points += pointsToAdd;
-                        }
-                        first_code.objectives[i] = null;
-                        Destroy(first_code.unions[i].gameObject);
-                        first_code.unions[i] = null;
-                        //Debug.Log("nodo sacado" + this.gameObject);
+                        RecoverPointsFromConnectionCancel(first,gameObject);
+                        DeleteConnection(first,gameObject);
                         first = null;
                         return;
                     }
                 }
-                int index_to_use = 0;
                 //no existe, selecciono el espacio para agregar la union
                 for (int i = 0; i < first_code.total_unions; i++)
                 {
                     // cuando encontremos uno vacio lo usaremos
                     if (first_code.objectives[i] == null)
                     {
-                        first_code.objectives[i] = this.gameObject;
-                        index_to_use = i;
-                        first_code.used_unions += 1;
-                        break;
+                        if(PermitConnection(first,gameObject))
+                        {
+                            first_code.objectives[i] = this.gameObject;
+                            Connect(first, gameObject);
+                            PointsAfterConnection(first, gameObject);
+                            first_code.used_unions += 1;
+                            first=null;
+                            break;
+                        }
+                        
                     }
                 }
 
@@ -169,10 +160,8 @@ public class Nodo : MonoBehaviour
                     if (first_code.objectives[i] == this.gameObject)
                     {
                         //ya existe, elimino la flecha y libero el cupo
-                        first_code.used_unions -= 1;
-                        first_code.objectives[i] = null;
-                        Destroy(first_code.unions[i].gameObject);
-                        first_code.unions[i] = null;
+                        RecoverPointsFromConnectionCancel(first,gameObject);
+                        DeleteConnection(first,gameObject);
                         Debug.Log("nodo sacado" + this.gameObject);
                         first = null;
                         return;
@@ -187,17 +176,89 @@ public class Nodo : MonoBehaviour
         }
     }
 
+    void UpdatePointsNumber() //this function update the value on the centerText of the unit, this should be looped throught all units
+    {
+        int points = gameObject.GetComponent<Nodo>().points;
+        transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = points.ToString();
+    }
+
+    void Connect(GameObject sender, GameObject objective)//be sure to add the objective to list before using this function
+    {
+        Vector2 posSender = sender.transform.position;
+        Vector2 posObjective = objective.transform.position;
+        Vector2 initialPos = sender.GetComponent<CircleCollider2D>().ClosestPoint(posObjective);
+        Vector2 finalPos = objective.GetComponent<CircleCollider2D>().ClosestPoint(posSender);
+        float distX = Mathf.Abs(posSender.x - posObjective.x);
+        float distY = Mathf.Abs(posSender.y - posObjective.y);
+        float colliderDistance = Vector2.Distance(initialPos, finalPos);
+        float middleX = (posSender.x + posObjective.x) / 2f;
+        float middleY = (posSender.y + posObjective.y) / 2f;
+        float angle = Mathf.Atan(distY / distX) * 180 / Mathf.PI;
+        if (posSender.x < posObjective.x && posSender.y >= posObjective.y) { angle *= -1; }
+        else if (posSender.x >= posObjective.x && posSender.y >= posObjective.y) { angle += 180; }
+        else if (posSender.x >= posObjective.x && posSender.y < posObjective.y) { angle += (90 - angle) * 2; }
+        GameObject arrowObject = Instantiate(data.Flecha, new Vector3(middleX, middleY, 0), Quaternion.identity);
+        arrowObject.transform.Rotate(0, 0, angle - 90);
+        arrowObject.transform.localScale = new Vector3(0.3f, 0.15f * colliderDistance, 1);
+        int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
+        sender.GetComponent<Nodo>().unions[index] = arrowObject;
+    }
+
+    void PointsAfterConnection(GameObject sender, GameObject objective)// use only with values pre validated by PermitConnection, reduce sender points by stretching concept
+    {
+        Vector2 posSender = sender.transform.position;
+        Vector2 posObjective = objective.transform.position;
+        float distTotal = Vector2.Distance(posSender, posObjective);
+        int points = sender.GetComponent<Nodo>().points;
+        int finalPoints = points - (int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth);
+        sender.GetComponent<Nodo>().points = finalPoints;
+    }
+
+    void RecoverPointsFromConnectionCancel(GameObject sender, GameObject objective)// recover all the points (or less when over 100) when 
+    {
+        Vector2 posSender = sender.transform.position;
+        Vector2 posObjective = objective.transform.position;
+        float distTotal = Vector2.Distance(posSender, posObjective);
+        int points = sender.GetComponent<Nodo>().points;
+        int finalPoints = points + Mathf.Min(100, (int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth));
+        sender.GetComponent<Nodo>().points = finalPoints;
+    }
+
+    void DeleteConnection(GameObject sender, GameObject objective) //remove the arrow from unions and objectives lists, and scene
+    {
+        int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
+        Destroy(sender.GetComponent<Nodo>().unions[index]);
+        sender.GetComponent<Nodo>().unions[index] = null;
+        sender.GetComponent<Nodo>().objectives[index] = null;
+        sender.GetComponent<Nodo>().used_unions--;
+    }
+
+    bool PermitConnection(GameObject sender, GameObject objective)
+    {
+        int points = sender.GetComponent<Nodo>().points;
+        Vector2 posSender = sender.transform.position;
+        Vector2 posObjective = objective.transform.position;
+        float distTotal = Vector2.Distance(posSender, posObjective);
+        if ((int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth) <= points)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
     void Start()
     {
         data = GameObject.Find("Data").GetComponent<Data_Inicio_Turno>();
         AddEmpty();
-        textObject = gameObject.transform.GetChild(0).GetChild(0).gameObject;
-        textObject.GetComponent<TextMeshProUGUI>().text = points.ToString();
     }
 
     void Update()
     {
-        textObject.GetComponent<TextMeshProUGUI>().text = points.ToString();
+        UpdatePointsNumber();
         ChangeColor();
         if (fade > 0)
         {

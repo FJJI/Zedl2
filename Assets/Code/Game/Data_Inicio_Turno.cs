@@ -22,6 +22,7 @@ public class Data_Inicio_Turno : MonoBehaviour
     public List<bool> defeated;
     public List<string> fav_unit = new List<string> { "none", "none", "none", "none" };
     public List<string> players;
+    public List<NodoClass> DBnodos;
 
 // Los Nodos + la flecha 
 public GameObject Normal;
@@ -56,6 +57,7 @@ public GameObject Normal;
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
         players = new List<string>();
         defeated = new List<bool>();
+        DBnodos = new List<NodoClass>();
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
         matchID = int.Parse(PlayerPrefs.GetString("Room"));
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("turn").ValueChanged += HandleChangeTurn;
@@ -88,6 +90,7 @@ public GameObject Normal;
         DataSnapshot msg = args.Snapshot;
         Debug.Log(msg.Value.ToString());
         playerTurn = int.Parse(msg.Value.ToString());
+        GetNodes();
     }
 
     public async void GetPlayers() 
@@ -157,6 +160,48 @@ public GameObject Normal;
         gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text="Player "+playerTurn+" turn";
     }
 
+    async void GetNodes()
+    {
+        DBnodos = new List<NodoClass>();
+        await dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("nodos").GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            {
+            }
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                foreach (DataSnapshot nodo in snapshot.Children)
+                {
+                    List<int> objetivos = new List<int>();
+                    IDictionary dictNodos = (IDictionary)nodo.Value;
+                    int owner = int.Parse(dictNodos["owner"].ToString());
+                    int t_u = int.Parse(dictNodos["owner"].ToString());
+                    int u_u = int.Parse(dictNodos["used_unions"].ToString());
+                    int dmg = int.Parse(dictNodos["dmgFactor"].ToString());
+                    int healing = int.Parse(dictNodos["healingFactor"].ToString());
+                    int ident = int.Parse(dictNodos["identifier"].ToString());
+                    int points = int.Parse(dictNodos["points"].ToString());
+                    Debug.Log(points);
+                    int p_x = int.Parse(dictNodos["posx"].ToString());
+                    int p_y = int.Parse(dictNodos["posy"].ToString());
+                    int p_z = int.Parse(dictNodos["posz"].ToString());
+                    int type = int.Parse(dictNodos["type"].ToString());
+                    if (u_u != 0)
+                    {
+                        Debug.Log("objetivos");
+                        foreach (DataSnapshot objs in nodo.Child("objective").Children)
+                        {
+                            Debug.Log(objs.Value.ToString());
+                            objetivos.Add(int.Parse(objs.Value.ToString()));
+                        }
+                    }
+
+
+                }
+            }
+        });
+    }
     
 }
 

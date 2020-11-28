@@ -16,6 +16,7 @@ public class Inicio_Ronda : MonoBehaviour
         else  // Cargo la partida guardada
         {
             //TODO : Handle de Vicho para cargar
+            // Posterior al cargado de Vicho
         }
     }
 

@@ -45,7 +45,7 @@ public GameObject Normal;
         {
             Destroy(gameObject);
         }
-        players = new List<string> { "MRFJJI", "Gamma994" };
+        players = new List<string> { "MRFJJI", "MRFJJI" };
     }
 
     [Obsolete]
@@ -55,7 +55,6 @@ public GameObject Normal;
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
 
-        dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").ChildChanged += HandleChangeGame;
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").ChildChanged += HandleChangeGame;
 
 
@@ -95,12 +94,11 @@ public GameObject Normal;
 
         for (int i = 0; i < InitialPlayers; i++)
         {
-            PlayerClassGame pc = new PlayerClassGame(players[i], i+1, defeated[i], int.Parse(fav_unit[i]));
+            PlayerClassGame pc = new PlayerClassGame(players[i], i+1, defeated[i], -1);
             string jsonPlayer = JsonUtility.ToJson(pc);
             await reference.Child("rooms").Child(matchID.ToString()).Child("participantes").SetRawJsonValueAsync(jsonPlayer);
-            Debug.Log("data segura");
+            Debug.Log("PC segura");
         }
-        
     }
 
 

@@ -56,7 +56,6 @@ public GameObject Normal;
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
 
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").ChildChanged += HandleChangeGame;
-        dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").ChildChanged += HandleChangeGame;
 
 
     }
@@ -70,6 +69,7 @@ public GameObject Normal;
         }
         Debug.LogWarning("ASDASDASDASD");
         DataSnapshot msg = args.Snapshot;
+        Debug.Log(args.Snapshot);
         IDictionary dataPartida = (IDictionary)msg.Value;
         Debug.Log(dataPartida["turn"]);
         turn = int.Parse(dataPartida["turn"].ToString());
@@ -95,7 +95,7 @@ public GameObject Normal;
 
         for (int i = 0; i < InitialPlayers; i++)
         {
-            PlayerClassGame pc = new PlayerClassGame(players[i], i+1, defeated[i], int.Parse(fav_unit[i]));
+            PlayerClassGame pc = new PlayerClassGame(players[i], i+1, defeated[i], -1);
             string jsonPlayer = JsonUtility.ToJson(pc);
             await reference.Child("rooms").Child(matchID.ToString()).Child("participantes").SetRawJsonValueAsync(jsonPlayer);
             Debug.Log("data segura");

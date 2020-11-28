@@ -19,7 +19,7 @@ public class Data_Inicio_Turno : MonoBehaviour
     public int turn;
     public int playerTurn;  // para saber a quien le damos el beneficio de jugar, sino poner una nota
     public int InitialPlayers;  // para saber la cantidad de la player para armar la partida, los cambios de turno y saber cuando alguien pierde
-    public List<bool> defeated = new List<bool> { false, false, false, false }; 
+    public List<bool> defeated;
     public List<string> fav_unit = new List<string> { "none", "none", "none", "none" };
     public List<string> players;
 
@@ -55,6 +55,7 @@ public GameObject Normal;
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
         players = new List<string>();
+        defeated = new List<bool>();
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
         matchID = int.Parse(PlayerPrefs.GetString("Room"));
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("turn").ValueChanged += HandleChangeTurn;
@@ -116,6 +117,7 @@ public GameObject Normal;
                     IDictionary dictUser = (IDictionary)user.Value;
                     users.Add(dictUser["username"].ToString());
                     Debug.Log(dictUser["username"].ToString());
+                    defeated.Add(false);
                 }
             }
             players = users;

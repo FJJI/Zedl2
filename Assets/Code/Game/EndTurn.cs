@@ -38,9 +38,10 @@ public class EndTurn : MonoBehaviour
             data.turn++;
             while(true)
             {
+
                 data.playerTurn++;
                 Debug.Log(data.playerTurn - 1);
-                if (data.playerTurn > data.InitialPlayers)
+                if(data.playerTurn > data.InitialPlayers)
                 {
                     data.playerTurn=1;
                 }

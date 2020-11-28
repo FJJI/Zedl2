@@ -45,7 +45,7 @@ public GameObject Normal;
         {
             Destroy(gameObject);
         }
-        players = new List<string> { "MRFJJI", "Gamma994" };
+        players = new List<string> { "MRFJJI", "MRFJJI" };
     }
 
     [Obsolete]
@@ -98,9 +98,8 @@ public GameObject Normal;
             PlayerClassGame pc = new PlayerClassGame(players[i], i+1, defeated[i], -1);
             string jsonPlayer = JsonUtility.ToJson(pc);
             await reference.Child("rooms").Child(matchID.ToString()).Child("participantes").SetRawJsonValueAsync(jsonPlayer);
-            Debug.Log("data segura");
+            Debug.Log("PC segura");
         }
-        
     }
 
 

@@ -1,29 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using TMPro;
 using UnityEngine;
-using TMPro;
 
 public class EndTurn : MonoBehaviour
 {
     // Start is called before the first frame update
-    public GameObject data;
-
+    Data_Inicio_Turno data;
     int turn;
 
     bool activeButton;
 
     void Start()
     {
-        
-
-        
+       data = GameObject.Find("Data").GetComponent<Data_Inicio_Turno>();
     }
 
     // Update is called once per frame
-    void GetData()
-    {
-        turn = data.GetComponent<Data_Inicio_Turno>().playerTurn;
-        if(data.GetComponent<Data_Inicio_Turno>().players[turn-1]==PlayerPrefs.GetString("UserName"))
+    void Update()
+    {     
+        turn = data.playerTurn;
+        if(data.players[turn-1]==PlayerPrefs.GetString("UserName"))
         {
             activeButton=true;
             gameObject.GetComponent<TextMeshProUGUI>().text = "Next Turn";
@@ -38,21 +33,20 @@ public class EndTurn : MonoBehaviour
 
     void OnMouseDown()
     {
-        GetData();
         if(activeButton)
         {
-            data.GetComponent<Data_Inicio_Turno>().turn++;
+            data.turn++;
             while(true)
             {
-                data.GetComponent<Data_Inicio_Turno>().playerTurn++;
-                if(data.GetComponent<Data_Inicio_Turno>().playerTurn>data.GetComponent<Data_Inicio_Turno>().InitialPlayers)
+                data.playerTurn++;
+                if(data.playerTurn > data.InitialPlayers)
                 {
-                    data.GetComponent<Data_Inicio_Turno>().playerTurn=1;
+                    data.playerTurn=1;
                 }
-                if (!(data.GetComponent<Data_Inicio_Turno>().defeated[data.GetComponent<Data_Inicio_Turno>().playerTurn-1]))
+                if (!(data.defeated[data.playerTurn-1]))
                 {
                     ExecuteChanges();
-                    data.GetComponent<Data_Inicio_Turno>().SaveData();
+                    data.SaveData();
                     break;
                 }
             }
@@ -61,15 +55,15 @@ public class EndTurn : MonoBehaviour
 
     void ExecuteChanges()
     {
-        for(int i = 0; i<data.GetComponent<Data_Inicio_Turno>().nodos.Count;i++)
+        for(int i = 0; i<data.nodos.Count;i++)
         {
-            data.GetComponent<Data_Inicio_Turno>().nodos[i].GetComponent<Nodo>(). DefinePowerFactors();
+            data.nodos[i].GetComponent<Nodo>(). DefinePowerFactors();
         }
-        for(int i = 0; i<data.GetComponent<Data_Inicio_Turno>().nodos.Count;i++)
+        for(int i = 0; i < data.nodos.Count; i++)
         {
-            for(int j = 0; j < data.GetComponent<Data_Inicio_Turno>().nodos[i].GetComponent<Nodo>().used_unions;j++)
+            for(int j = 0; j < data.nodos[i].GetComponent<Nodo>().used_unions; j++)
             {
-                data.GetComponent<Data_Inicio_Turno>().nodos[i].GetComponent<Nodo>().AtackHealUnit(data.GetComponent<Data_Inicio_Turno>().nodos[i].GetComponent<Nodo>().objectives[j]);
+                data.nodos[i].GetComponent<Nodo>().AtackHealUnit(data.nodos[i].GetComponent<Nodo>().objectives[j]);
             }
         }
         

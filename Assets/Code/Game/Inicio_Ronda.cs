@@ -9,7 +9,10 @@ public class Inicio_Ronda : MonoBehaviour
     Data_Inicio_Turno data;
     public void setup()
     {
+        Debug.Log(data.turn);
         Debug.Log(data.playerTurn);
+        Debug.Log(data.players[data.playerTurn - 1]);
+        Debug.Log(PlayerPrefs.GetString("UserName"));
         if (data.turn == 0 && data.players[data.playerTurn-1] == PlayerPrefs.GetString("UserName")) // si es el primer turno (turno 0 para el armado), armo una nueva partida, de lo contrario, cargo los datos existentes.
         {
             defaultStart();
@@ -67,7 +70,7 @@ public class Inicio_Ronda : MonoBehaviour
             data.nodos.Add(nuevo_nodo);
         }
         data.turn = 1; //una vez iniciado todo, hacemos que parta el juego con el 1° turno
-        data.playerTurn++;   // Este dato parte en 0, por lo que tenemos que permitir que parta
+           // Este dato parte en 0, por lo que tenemos que permitir que parta
 
 
         // Probando la funcion de SaveData()

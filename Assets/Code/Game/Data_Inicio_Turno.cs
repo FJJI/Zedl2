@@ -86,7 +86,7 @@ public GameObject Normal;
         }
         DataSnapshot msg = args.Snapshot;
         Debug.Log(msg.Value.ToString());
-        turn = int.Parse(msg.Value.ToString());
+        playerTurn = int.Parse(msg.Value.ToString());
     }
 
     public async void GetPlayers() 

@@ -21,7 +21,7 @@ public class Data_Inicio_Turno : MonoBehaviour
     public int InitialPlayers;  // para saber la cantidad de la player para armar la partida, los cambios de turno y saber cuando alguien pierde
     public List<bool> defeated = new List<bool> { false, false, false, false }; 
     public List<string> fav_unit = new List<string> { "none", "none", "none", "none" };
-    public List<string> players = new List<string> { "eivelez", "perro", "none", "none" };
+    public List<string> players;
 
 // Los Nodos + la flecha 
 public GameObject Normal;
@@ -45,7 +45,7 @@ public GameObject Normal;
         {
             Destroy(gameObject);
         }
-        players = new List<string> { "MRFJJI", "MRFJJI" };
+        
     }
 
     [Obsolete]
@@ -53,11 +53,34 @@ public GameObject Normal;
     {
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
+        players = new List<string>();
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
         matchID = int.Parse(PlayerPrefs.GetString("Room"));
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").ChildChanged += HandleChangeGame;
+        GetPlayers();
 
+    }
 
+    private async void GetPlayers() 
+    {
+        List<String> users = new List<string>();
+        await dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("players").GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            {
+            }
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                foreach (DataSnapshot user in snapshot.Children)
+                {
+                    IDictionary dictUser = (IDictionary)user.Value;
+                    users.Add(dictUser["username"].ToString());
+                    Debug.Log(dictUser["username"].ToString());
+                }
+            }
+        });
+        players = users;
     }
     private void HandleChangeGame(object sender, ChildChangedEventArgs args)
     {

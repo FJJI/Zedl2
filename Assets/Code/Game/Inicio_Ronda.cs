@@ -153,7 +153,6 @@ public class Inicio_Ronda : MonoBehaviour
     {
         data = GameObject.Find("Data").GetComponent<Data_Inicio_Turno>();
         data.GetPlayers();
-        
     }
 
     // Update is called once per frame

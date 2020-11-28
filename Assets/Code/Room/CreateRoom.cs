@@ -62,6 +62,9 @@ public class CreateRoom : MonoBehaviour
         PlayerClass player = new PlayerClass(PlayerPrefs.GetString("UserName"), "false");
         json = JsonUtility.ToJson(player);
         await reference.Child("rooms").Child(roomId.ToString()).Child("players").Child(PlayerPrefs.GetString("UID")).SetRawJsonValueAsync(json);
+        DataClass datagame = new DataClass(roomId, 0, 1, int.Parse(players));
+        string jsonData = JsonUtility.ToJson(datagame); 
+        await reference.Child("rooms").Child(roomId.ToString()).Child("datapartida").SetRawJsonValueAsync(jsonData);
         Destroy(GameObject.Find("MusicManager"));
         SceneManager.LoadScene("RoomScene");
         

@@ -70,10 +70,6 @@ public class Inicio_Ronda : MonoBehaviour
             data.nodos.Add(nuevo_nodo);
         }
         data.turn = 1; //una vez iniciado todo, hacemos que parta el juego con el 1° turno
-<<<<<<< HEAD
-=======
-           // Este dato parte en 0, por lo que tenemos que permitir que parta
->>>>>>> 3403dcd6613217bfa04b5d882e162e3d87191129
 
 
         // Probando la funcion de SaveData()

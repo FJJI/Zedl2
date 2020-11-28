@@ -39,10 +39,12 @@ public class EndTurn : MonoBehaviour
             while(true)
             {
                 data.playerTurn++;
-                if(data.playerTurn > data.InitialPlayers)
+                Debug.Log(data.playerTurn - 1);
+                if (data.playerTurn > data.InitialPlayers)
                 {
                     data.playerTurn=1;
                 }
+                Debug.Log(data.playerTurn - 1);
                 if (!(data.defeated[data.playerTurn-1]))
                 {
                     ExecuteChanges();

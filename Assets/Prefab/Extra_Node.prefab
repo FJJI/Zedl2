@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: 0
-  total_unions: 2
+  total_unions: 3
   used_unions: 0
   type: 0
   objectives: []

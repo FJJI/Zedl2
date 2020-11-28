@@ -150,6 +150,7 @@ public class Inicio_Ronda : MonoBehaviour
     void Start()
     {
         data = GameObject.Find("Data").GetComponent<Data_Inicio_Turno>();
+
         setup();
     }
 

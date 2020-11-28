@@ -9,13 +9,13 @@ public class Inicio_Ronda : MonoBehaviour
     Data_Inicio_Turno data;
     void setup()
     {
-        if (data.turn == 0) // si es el primer turno (turno 0 para el armado), armo una nueva partida, de lo contrario, cargo los datos existentes.
+        if (data.turn == 0 && data.players[data.playerTurn] == PlayerPrefs.GetString("UserName")) // si es el primer turno (turno 0 para el armado), armo una nueva partida, de lo contrario, cargo los datos existentes.
         {
             defaultStart();
         }
         else  // Cargo la partida guardada
         {
-            //TODO
+            //TODO : Handle de Vicho para cargar
         }
     }
 
@@ -28,8 +28,8 @@ public class Inicio_Ronda : MonoBehaviour
         List<GameObject> nodes = new List<GameObject> {Normal, Ataque, Defensa,Extra}; // Ajustar por el que se toma en favoritos 
         // Tipo 0 es normal, 1 es warrior, 2 es defensa, 3 es nodo extra
 
-        List<int> positionsx = new List<int> {7,-7, 7,-7, 4,4,-4,-4,0, 0};
-        List<int> positionsy = new List<int> {3,-3,-3, 3,-2,2,-2, 2,3,-3};
+        List<int> positionsx = new List<int> { 7,-7, 7,-7, 4, 4,-4,-4, 0, 0};
+        List<int> positionsy = new List<int> { 3,-3,-3, 3,-2, 2,-2, 2, 3,-3};
         for (int i = 1; i <= 10; i++)
         {
             Debug.Log(i);
@@ -49,10 +49,6 @@ public class Inicio_Ronda : MonoBehaviour
                 nuevo_nodo = Instantiate(nodes[fav], new Vector3(positionsx[i-1], positionsy[i-1], -1), Quaternion.identity);
                 nuevo_nodo.GetComponent<Nodo>().owner = i;
                 nuevo_nodo.GetComponent<Nodo>().type = fav;
-                if (fav == 3)
-                {
-                    nuevo_nodo.GetComponent<Nodo>().total_unions = 3;
-                }
 
 
             }
@@ -69,7 +65,8 @@ public class Inicio_Ronda : MonoBehaviour
             data.nodos.Add(nuevo_nodo);
         }
         data.turn = 1; //una vez iniciado todo, hacemos que parta el juego con el 1° turno
-        data.playerTurn++;
+        data.playerTurn++;   // Este dato parte en 0, por lo que tenemos que permitir que parta
+
 
         // Probando la funcion de SaveData()
         data.SaveData();

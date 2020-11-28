@@ -20,7 +20,7 @@ public class EndTurn : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    /*void Update()
     {
         turn = data.GetComponent<Data_Inicio_Turno>().playerTurn;
         if(data.GetComponent<Data_Inicio_Turno>().players[turn-1]==PlayerPrefs.GetString("UserName"))
@@ -34,7 +34,7 @@ public class EndTurn : MonoBehaviour
             gameObject.GetComponent<TextMeshProUGUI>().text = "Waiting for player";
         }
         
-    }
+    }*/
 
     void OnMouseDown()
     {

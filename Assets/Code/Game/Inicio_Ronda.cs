@@ -7,8 +7,9 @@ using UnityEngine;
 public class Inicio_Ronda : MonoBehaviour
 {
     Data_Inicio_Turno data;
-    void setup()
+    public void setup()
     {
+        Debug.Log(data.playerTurn);
         if (data.turn == 0 && data.players[data.playerTurn-1] == PlayerPrefs.GetString("UserName")) // si es el primer turno (turno 0 para el armado), armo una nueva partida, de lo contrario, cargo los datos existentes.
         {
             defaultStart();
@@ -148,7 +149,7 @@ public class Inicio_Ronda : MonoBehaviour
     void Start()
     {
         data = GameObject.Find("Data").GetComponent<Data_Inicio_Turno>();
-        setup();
+        data.GetPlayers();
     }
 
     // Update is called once per frame

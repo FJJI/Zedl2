@@ -13,7 +13,7 @@ public class Data_Inicio_Turno : MonoBehaviour
 {
     private DatabaseReference reference;
     private FirebaseDatabase dbInstance;
-
+    Inicio_Ronda inicio;
     static public Data_Inicio_Turno data;
     public int matchID;  // para sacar - poner la data
     public int turn;
@@ -36,6 +36,7 @@ public GameObject Normal;
 
     void Awake()  // Hacemos que la esta data exista en lapartida y de ser necesario, desde el room para su trata con la informacion
     {
+        inicio = GameObject.Find("Manager Partida").GetComponent<Inicio_Ronda>();
         if (data == null)
         {
             data = this;
@@ -56,14 +57,52 @@ public GameObject Normal;
         players = new List<string>();
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
         matchID = int.Parse(PlayerPrefs.GetString("Room"));
-        dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").ChildChanged += HandleChangeGame;
-        GetPlayers();
+        dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("turn").ValueChanged += HandleChangeTurn;
+        dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("playerTurn").ValueChanged += HandleChangePlayer;
+
 
     }
 
-    private async void GetPlayers() 
+    private void HandleChangeTurn(object sender, ValueChangedEventArgs args)
+    {
+
+        if (args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+        DataSnapshot msg = args.Snapshot;
+        Debug.Log(msg.Value.ToString());
+        turn = int.Parse(msg.Value.ToString());
+
+    }
+
+    private void HandleChangePlayer(object sender, ValueChangedEventArgs args)
+    {
+        if (args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+        DataSnapshot msg = args.Snapshot;
+        Debug.Log(msg.Value.ToString());
+        turn = int.Parse(msg.Value.ToString());
+    }
+
+    public async void GetPlayers() 
     {
         List<String> users = new List<string>();
+        await dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            { }
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                IDictionary dictData = (IDictionary)snapshot.Value;
+                playerTurn = int.Parse(dictData["playerTurn"].ToString());
+            }
+        });
         await dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("players").GetValueAsync().ContinueWith(task =>
         {
             if (task.IsFaulted)
@@ -79,27 +118,12 @@ public GameObject Normal;
                     Debug.Log(dictUser["username"].ToString());
                 }
             }
+            players = users;
+            Debug.Log(players.Count);
         });
-        players = users;
+        inicio.setup();
     }
-    private void HandleChangeGame(object sender, ChildChangedEventArgs args)
-    {
-        
-        if (args.DatabaseError != null)
-        {
-            Debug.LogError(args.DatabaseError.Message);
-            return;
-        }
-        Debug.LogWarning("ASDASDASDASD");
-        DataSnapshot msg = args.Snapshot;
-        Debug.Log(args.Snapshot);
-        IDictionary dataPartida = (IDictionary)msg.Value;
-        Debug.Log(dataPartida["turn"]);
-        turn = int.Parse(dataPartida["turn"].ToString());
-        playerTurn = int.Parse(dataPartida["playerTurn"].ToString());
-        InitialPlayers = int.Parse(dataPartida["InitialPlayers"].ToString());
-        
-    }
+    
 
     public async void SaveData()
     {
@@ -111,7 +135,7 @@ public GameObject Normal;
             jsonNodos = JsonUtility.ToJson(nc);
             await reference.Child("rooms").Child(matchID.ToString()).Child("nodos").Child(ident).SetRawJsonValueAsync(jsonNodos);
         }
-        DataClass dc = new DataClass(data);
+        DataClass dc = new DataClass(matchID, turn, playerTurn, InitialPlayers);
         string jsonData = JsonUtility.ToJson(dc);
         await reference.Child("rooms").Child(matchID.ToString()).Child("datapartida").SetRawJsonValueAsync(jsonData);
         Debug.Log("data segura");

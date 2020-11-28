@@ -9,7 +9,7 @@ public class Inicio_Ronda : MonoBehaviour
     Data_Inicio_Turno data;
     void setup()
     {
-        if (data.turn == 0 && data.players[data.playerTurn] == PlayerPrefs.GetString("UserName")) // si es el primer turno (turno 0 para el armado), armo una nueva partida, de lo contrario, cargo los datos existentes.
+        if (data.turn == 0 && data.players[data.playerTurn-1] == PlayerPrefs.GetString("UserName")) // si es el primer turno (turno 0 para el armado), armo una nueva partida, de lo contrario, cargo los datos existentes.
         {
             defaultStart();
         }

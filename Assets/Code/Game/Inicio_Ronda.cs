@@ -77,6 +77,7 @@ public class Inicio_Ronda : MonoBehaviour
         data.turn = 1; //una vez iniciado todo, hacemos que parta el juego con el 1° turno
 
 
+        data.InitialPlayers = data.players.Count;
         // Probando la funcion de SaveData()
         data.SaveData();
     }

@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using System.Linq;
 
 public class EndTurn : MonoBehaviour
 {
@@ -58,13 +59,13 @@ public class EndTurn : MonoBehaviour
 
     void ExecuteChanges()
     {
-        for(int i = 0; i<data.nodos.Count;i++)
+        for (int i = 0; i<data.nodos.Count;i++)
         {
-            data.nodos[i].GetComponent<Nodo>(). DefinePowerFactors();
+            data.nodos[i].GetComponent<Nodo>().DefinePowerFactors();
         }
         for(int i = 0; i < data.nodos.Count; i++)
         {
-            for(int j = 0; j < data.nodos[i].GetComponent<Nodo>().used_unions; j++)
+            for (int j = 0; j < data.nodos[i].GetComponent<Nodo>().used_unions; j++)
             {
                 data.nodos[i].GetComponent<Nodo>().AtackHealUnit(data.nodos[i].GetComponent<Nodo>().objectives[j]);
             }

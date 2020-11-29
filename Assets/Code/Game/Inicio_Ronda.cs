@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using System.Threading;
 
 public class Inicio_Ronda : MonoBehaviour
 {
@@ -19,8 +20,12 @@ public class Inicio_Ronda : MonoBehaviour
         }
         else  // Cargo la partida guardada
         {
-            //TODO : Handle de Vicho para cargar
-            // Posterior al cargado de Vicho
+            Thread t = new Thread(new ParameterizedThreadStart((object sender) =>
+            {
+                Thread.Sleep(4000);
+                data.GetNodes();
+            }));
+            t.Start();
         }
     }
 

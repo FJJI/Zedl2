@@ -62,6 +62,7 @@ public class Data_Inicio_Turno : MonoBehaviour
         defeated = new List<bool>();
         DBnodos = new List<NodoClass>();
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
+        InitialPlayers = players.Count;
         GetInitialPlayers();
         matchID = int.Parse(PlayerPrefs.GetString("Room"));
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("turn").ValueChanged += HandleChangeTurn;

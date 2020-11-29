@@ -181,9 +181,9 @@ public class Data_Inicio_Turno : MonoBehaviour
         List<float> p_ys = new List<float>();
         List<float> p_zs = new List<float>();
         List<Nodo> nodoClasses = new List<Nodo>();
-        for (int a = 0; a < 10; a++)
+        foreach (GameObject nod in nodos)
         {
-            nodoClasses.Add(nodos[a].GetComponent<Nodo>());
+            nodoClasses.Add(nod.GetComponent<Nodo>());
         }
 
         await dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("nodos").GetValueAsync().ContinueWith(task =>

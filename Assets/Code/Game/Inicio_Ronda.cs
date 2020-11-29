@@ -77,8 +77,12 @@ public class Inicio_Ronda : MonoBehaviour
         data.turn = 1; //una vez iniciado todo, hacemos que parta el juego con el 1° turno
 
 
-        // Probando la funcion de SaveData()
-        data.SaveData();
+        Thread t = new Thread(new ParameterizedThreadStart((object sender) =>
+        {
+            Thread.Sleep(4000);
+            data.SaveData();
+        }));
+        t.Start();
     }
 
     void Connect(GameObject sender, GameObject objective)//be sure to add the objective to list before using this function

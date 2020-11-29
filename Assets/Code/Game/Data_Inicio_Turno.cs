@@ -62,8 +62,6 @@ public class Data_Inicio_Turno : MonoBehaviour
         defeated = new List<bool>();
         DBnodos = new List<NodoClass>();
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
-        InitialPlayers = players.Count;
-        GetInitialPlayers();
         matchID = int.Parse(PlayerPrefs.GetString("Room"));
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("turn").ValueChanged += HandleChangeTurn;
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("playerTurn").ValueChanged += HandleChangePlayer;
@@ -99,22 +97,6 @@ public class Data_Inicio_Turno : MonoBehaviour
         GetNodes();
     }
 
-    public async void GetInitialPlayers()
-    { 
-        await dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").GetValueAsync().ContinueWith(task =>
-        {
-            if (task.IsFaulted)
-            {
-
-            }
-            else if (task.IsCompleted)
-            {
-                DataSnapshot snapshot = task.Result;
-                IDictionary datos = (IDictionary)snapshot.Value;
-                InitialPlayers = int.Parse(datos["InitialPlayers"].ToString());
-            }
-        });
-    }
 
     public async void GetPlayers() 
     {
@@ -149,6 +131,7 @@ public class Data_Inicio_Turno : MonoBehaviour
             players = users;
             Debug.Log(players.Count);
         });
+        InitialPlayers = players.Count;
         inicio.setup();
     }
     

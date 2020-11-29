@@ -40,7 +40,6 @@ public class Data_Inicio_Turno : MonoBehaviour
 
     void Awake()  // Hacemos que la esta data exista en lapartida y de ser necesario, desde el room para su trata con la informacion
     {
-        GetInitialPlayers();
         inicio = GameObject.Find("Manager Partida").GetComponent<Inicio_Ronda>();
         if (data == null)
         {
@@ -63,6 +62,7 @@ public class Data_Inicio_Turno : MonoBehaviour
         defeated = new List<bool>();
         DBnodos = new List<NodoClass>();
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
+        GetInitialPlayers();
         matchID = int.Parse(PlayerPrefs.GetString("Room"));
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("turn").ValueChanged += HandleChangeTurn;
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("playerTurn").ValueChanged += HandleChangePlayer;

@@ -40,6 +40,7 @@ public class Data_Inicio_Turno : MonoBehaviour
 
     void Awake()  // Hacemos que la esta data exista en lapartida y de ser necesario, desde el room para su trata con la informacion
     {
+        GetInitialPlayers();
         inicio = GameObject.Find("Manager Partida").GetComponent<Inicio_Ronda>();
         if (data == null)
         {
@@ -95,6 +96,23 @@ public class Data_Inicio_Turno : MonoBehaviour
         Debug.Log(msg.Value.ToString());
         playerTurn = int.Parse(msg.Value.ToString());
         GetNodes();
+    }
+
+    public async void GetInitialPlayers()
+    { 
+        await dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted)
+            {
+
+            }
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                IDictionary datos = (IDictionary)snapshot.Value;
+                InitialPlayers = int.Parse(datos["InitialPlayers"].ToString());
+            }
+        });
     }
 
     public async void GetPlayers() 

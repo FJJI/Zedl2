@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 using TMPro;
+using System.Linq;
 
 public class Data_Inicio_Turno : MonoBehaviour
 {
@@ -25,11 +26,12 @@ public class Data_Inicio_Turno : MonoBehaviour
     public List<NodoClass> DBnodos;
 
 // Los Nodos + la flecha 
-public GameObject Normal;
+    public GameObject Normal;
     public GameObject Extra;
     public GameObject Ataque;
     public GameObject Defensa;
     public GameObject Flecha;
+    public List<GameObject> nodes;
 
     public List<GameObject> nodos;
     public List<NodoClass> nodosListos;
@@ -63,8 +65,10 @@ public GameObject Normal;
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("turn").ValueChanged += HandleChangeTurn;
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("playerTurn").ValueChanged += HandleChangePlayer;
 
+        nodes = new List<GameObject> { Normal, Ataque, Defensa, Extra }; // Ajustar por el que se toma en favoritos 
 
-    }
+
+}
 
     private void HandleChangeTurn(object sender, ValueChangedEventArgs args)
     {
@@ -162,7 +166,26 @@ public GameObject Normal;
 
     async void GetNodes()
     {
+        bool creado = false;
         DBnodos = new List<NodoClass>();
+        List<List<int>> objetivos_tot = new List<List<int>>();
+        List<int> owners = new List<int>();
+        List<int> t_us = new List<int>();
+        List<int> u_us = new List<int>();
+        List<int> dmgs = new List<int>();
+        List<int> heals = new List<int>();
+        List<int> idents = new List<int>();
+        List<int> pointss = new List<int>();
+        List<int> types = new List<int>();
+        List<float> p_xs = new List<float>();
+        List<float> p_ys = new List<float>();
+        List<float> p_zs = new List<float>();
+        List<Nodo> nodoClasses = new List<Nodo>();
+        for (int a = 0; a < 10; a++)
+        {
+            nodoClasses.Add(nodos[a].GetComponent<Nodo>());
+        }
+
         await dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("nodos").GetValueAsync().ContinueWith(task =>
         {
             if (task.IsFaulted)
@@ -183,24 +206,101 @@ public GameObject Normal;
                     int ident = int.Parse(dictNodos["identifier"].ToString());
                     int points = int.Parse(dictNodos["points"].ToString());
                     Debug.Log(points);
-                    int p_x = int.Parse(dictNodos["posx"].ToString());
-                    int p_y = int.Parse(dictNodos["posy"].ToString());
-                    int p_z = int.Parse(dictNodos["posz"].ToString());
+                    float p_x = float.Parse(dictNodos["posx"].ToString());
+                    float p_y = float.Parse(dictNodos["posy"].ToString());
+                    float p_z = float.Parse(dictNodos["posz"].ToString());
                     int type = int.Parse(dictNodos["type"].ToString());
                     if (u_u != 0)
                     {
                         Debug.Log("objetivos");
-                        foreach (DataSnapshot objs in nodo.Child("objective").Children)
+                        foreach (DataSnapshot objs in nodo.Child("objectives").Children)
                         {
                             Debug.Log(objs.Value.ToString());
                             objetivos.Add(int.Parse(objs.Value.ToString()));
                         }
+                        objetivos_tot.Add(objetivos);
                     }
+                    // Acualizamos nodos
+                    if (nodos.Count == 0)
+                    {
+                        creado = true;
 
+                        owners.Add(owner);
+                        t_us.Add(t_u);
+                        u_us.Add(u_u);
+                        dmgs.Add(dmg);
+                        heals.Add(healing);
+                        idents.Add(ident);
+                        pointss.Add(points);
+                        types.Add(type);
+                        p_xs.Add(p_x);
+                        p_ys.Add(p_y);
+                        p_zs.Add(p_z);
+                    }
+                    else
+                    {
+                        foreach (Nodo nodoLocal in nodoClasses)
+                        {
+                            if (nodoLocal.identifier == ident)
+                            {
+                                nodoLocal.owner = owner;
+                                nodoLocal.total_unions = t_u;
+                                nodoLocal.used_unions = u_u;
+                                nodoLocal.dmgFactor = dmg;
+                                nodoLocal.healingFactor = healing;
+                                nodoLocal.identifier = ident;
+                                nodoLocal.points = points;
+
+
+                                nodoLocal.objectives.Clear();
+                                // To Do, Botar Flechas  --> Emilio
+
+                                for (int i = 0; i < objetivos.Count; i++)
+                                {
+                                    nodoLocal.objectives.Add(nodos[objetivos[i]]);
+                                    // TO DO: Hacer Flechas --> Emilio
+
+                                }
+                            }
+                        }
+                    }
 
                 }
             }
         });
+        if (creado)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                GameObject nuevo_nodo;
+                nuevo_nodo = Instantiate(nodes[types[j]], new Vector3(p_xs[j], p_ys[j], p_zs[j]), Quaternion.identity);
+                nuevo_nodo.GetComponent<Nodo>().owner = owners[j];
+                nuevo_nodo.GetComponent<Nodo>().total_unions = t_us[j];
+                nuevo_nodo.GetComponent<Nodo>().used_unions = u_us[j];
+                nuevo_nodo.GetComponent<Nodo>().dmgFactor = dmgs[j];
+                nuevo_nodo.GetComponent<Nodo>().healingFactor = heals[j];
+                nuevo_nodo.GetComponent<Nodo>().identifier = idents[j];
+                nuevo_nodo.GetComponent<Nodo>().points = pointss[j];
+
+                nodos.Add(nuevo_nodo);
+            }
+
+            //objetivos 
+            foreach (GameObject node in nodos)
+            {
+                int i = 0;
+                Nodo dataNode = node.GetComponent<Nodo>();
+                for(int e = 0; e < objetivos_tot[i].Count; e++)
+                {
+                    GameObject data_obj = nodos.SingleOrDefault(x => x.GetComponent<Nodo>().identifier == objetivos_tot[i][e]);
+                    dataNode.objectives.Add(data_obj);
+                }
+            }
+        }
+        else
+        {
+            //nodoLocal.transform.position = new Vector3(p_x, p_y, p_z);
+        }
     }
     
 }

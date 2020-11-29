@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 using TMPro;
+using System.Threading;
 using System.Linq;
 
 public class Data_Inicio_Turno : MonoBehaviour
@@ -67,8 +68,8 @@ public class Data_Inicio_Turno : MonoBehaviour
 
         nodes = new List<GameObject> { Normal, Ataque, Defensa, Extra }; // Ajustar por el que se toma en favoritos 
 
-
-}
+        turno_de_mentira = turn;
+    }
 
     private void HandleChangeTurn(object sender, ValueChangedEventArgs args)
     {
@@ -158,13 +159,21 @@ public class Data_Inicio_Turno : MonoBehaviour
         }
     }
 
-
+    int turno_de_mentira;
     void Update()
     {
         gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text="Player "+playerTurn+" turn";
+        if (turno_de_mentira != turn)
+        {
+            Thread t = new Thread(new ParameterizedThreadStart((object sender) =>
+            {
+                Thread.Sleep(4000);
+                GetNodes();
+            }));
+        }
     }
 
-    async void GetNodes()
+    public async void GetNodes()
     {
         bool creado = false;
         DBnodos = new List<NodoClass>();

@@ -687,7 +687,7 @@ MonoBehaviour:
   matchID: 0
   turn: 0
   playerTurn: 0
-  InitialPlayers: 0
+  InitialPlayers: 2
   defeated: 
   fav_unit:
   - none

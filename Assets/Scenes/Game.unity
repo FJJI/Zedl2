@@ -403,7 +403,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11a736f41c88c504bb1ab3f502ca00c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 1568316151}
 --- !u!61 &894038403
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -688,7 +687,7 @@ MonoBehaviour:
   matchID: 0
   turn: 0
   playerTurn: 0
-  InitialPlayers: 2
+  InitialPlayers: 0
   defeated: 
   fav_unit:
   - none
@@ -701,6 +700,7 @@ MonoBehaviour:
   Ataque: {fileID: 40449514753517188, guid: ed8a8ef6db938494897b3f15e84972a5, type: 3}
   Defensa: {fileID: 6779469752411818588, guid: 1473ab668ea0f814988532a499d7b85f, type: 3}
   Flecha: {fileID: 3853505329974284110, guid: c9a5702c5eeaf224e909ad31d1e9f6cc, type: 3}
+  nodes: []
   nodos: []
 --- !u!4 &1568316153
 Transform:

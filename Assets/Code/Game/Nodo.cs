@@ -217,7 +217,7 @@ public class Nodo : MonoBehaviour
         Vector2 posObjective = objective.transform.position;
         float distTotal = Vector2.Distance(posSender, posObjective);
         int points = sender.GetComponent<Nodo>().points;
-        int finalPoints = points + Mathf.Min(100, (int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth));
+        int finalPoints =  Mathf.Min(100, points + (int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth));
         sender.GetComponent<Nodo>().points = finalPoints;
     }
 

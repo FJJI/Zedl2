@@ -68,7 +68,6 @@ public class Data_Inicio_Turno : MonoBehaviour
 
         nodes = new List<GameObject> { Normal, Ataque, Defensa, Extra }; // Ajustar por el que se toma en favoritos 
 
-        turno_de_mentira = turn;
     }
 
     private void HandleChangeTurn(object sender, ValueChangedEventArgs args)
@@ -159,18 +158,10 @@ public class Data_Inicio_Turno : MonoBehaviour
         }
     }
 
-    int turno_de_mentira;
     void Update()
     {
         gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text="Player "+playerTurn+" turn";
-        if (turno_de_mentira != turn)
-        {
-            Thread t = new Thread(new ParameterizedThreadStart((object sender) =>
-            {
-                Thread.Sleep(4000);
-                GetNodes();
-            }));
-        }
+
     }
 
     public async void GetNodes()

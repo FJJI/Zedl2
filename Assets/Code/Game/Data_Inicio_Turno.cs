@@ -176,7 +176,7 @@ public GameObject Normal;
                     List<int> objetivos = new List<int>();
                     IDictionary dictNodos = (IDictionary)nodo.Value;
                     int owner = int.Parse(dictNodos["owner"].ToString());
-                    int t_u = int.Parse(dictNodos["owner"].ToString());
+                    int t_u = int.Parse(dictNodos["total_unions"].ToString());
                     int u_u = int.Parse(dictNodos["used_unions"].ToString());
                     int dmg = int.Parse(dictNodos["dmgFactor"].ToString());
                     int healing = int.Parse(dictNodos["healingFactor"].ToString());
@@ -190,7 +190,7 @@ public GameObject Normal;
                     if (u_u != 0)
                     {
                         Debug.Log("objetivos");
-                        foreach (DataSnapshot objs in nodo.Child("objective").Children)
+                        foreach (DataSnapshot objs in nodo.Child("objectives").Children)
                         {
                             Debug.Log(objs.Value.ToString());
                             objetivos.Add(int.Parse(objs.Value.ToString()));

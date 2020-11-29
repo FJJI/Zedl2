@@ -119,7 +119,7 @@ public class RoomScript : MonoBehaviour
         DataSnapshot data = args.Snapshot;
         IDictionary dictPlayer = (IDictionary)data.Value;
         string temp_name = dictPlayer["username"].ToString();
-        PlayerClass p_row = new PlayerClass(dictPlayer["username"].ToString(), dictPlayer["ready"].ToString());
+        PlayerClass p_row = new PlayerClass(dictPlayer["username"].ToString(), dictPlayer["ready"].ToString(), dictPlayer["fav_unit"].ToString());
         for(int p = 0; p < room_players.Count; p++)
         {
             Debug.Log(room_players[p].username);
@@ -183,7 +183,7 @@ public class RoomScript : MonoBehaviour
                 foreach (DataSnapshot p in snapshot.Children)
                 {
                     IDictionary dictPlayer = (IDictionary)p.Value;
-                    PlayerClass p_row = new PlayerClass(dictPlayer["username"].ToString(), dictPlayer["ready"].ToString());
+                    PlayerClass p_row = new PlayerClass(dictPlayer["username"].ToString(), dictPlayer["ready"].ToString(), dictPlayer["fav_unit"].ToString());
                     room_players.Add(p_row);
                     if (dictPlayer["ready"].ToString() == "true")
                     {

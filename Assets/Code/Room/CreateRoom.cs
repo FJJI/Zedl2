@@ -5,6 +5,7 @@ using Firebase.Unity.Editor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
+using System.Collections;
 
 public class CreateRoom : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class CreateRoom : MonoBehaviour
     public bool created;
     public bool found;
     public int roomId;
+    public string fav_unit;
 
     [Obsolete]
     void Start()
@@ -21,6 +23,7 @@ public class CreateRoom : MonoBehaviour
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
+        GetFavUnit();
         created = true;
         found = false;
         roomId = 0;
@@ -30,6 +33,19 @@ public class CreateRoom : MonoBehaviour
         backButton.onClick.AddListener(() => BackMenu());
     }
 
+    public async void GetFavUnit()
+    {
+        await dbInstance.GetReference("users").Child(PlayerPrefs.GetString("UID")).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted) { }
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                IDictionary user = (IDictionary)snapshot.Value;
+                fav_unit = user["fav_unit"].ToString();
+            }
+        });
+    }
     public async void RoomCreation(string players)
     {
         while (created == true)
@@ -59,7 +75,7 @@ public class CreateRoom : MonoBehaviour
         string json = JsonUtility.ToJson(room);
         await reference.Child("rooms").Child(roomId.ToString()).SetRawJsonValueAsync(json);
         Debug.Log("Room creada");
-        PlayerClass player = new PlayerClass(PlayerPrefs.GetString("UserName"), "false");
+        PlayerClass player = new PlayerClass(PlayerPrefs.GetString("UserName"), "false", fav_unit);
         json = JsonUtility.ToJson(player);
         await reference.Child("rooms").Child(roomId.ToString()).Child("players").Child(PlayerPrefs.GetString("UID")).SetRawJsonValueAsync(json);
         DataClass datagame = new DataClass(roomId, 0, 1, int.Parse(players));

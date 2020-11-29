@@ -69,6 +69,22 @@ public class ProfileScript : MonoBehaviour
         winsLabel.text = "Wins: " + wins;
         losesLabel.text = "Loses: " + loses;
         prefGLabel.text = "Prefered Game: " + fav_game;
+        if (fav_unit == "0")
+        {
+            fav_unit = "Normal";
+        }
+        else if (fav_unit == "1")
+        {
+            fav_unit = "Attack";
+        }
+        else if (fav_unit == "2")
+        {
+            fav_unit = "Defense";
+        }
+        else if (fav_unit == "3")
+        {
+            fav_unit = "Link";
+        }
         FavULabel.text = "Favorite initial Unit: " + fav_unit;
         SetNemesis();
     }

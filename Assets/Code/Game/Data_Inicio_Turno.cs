@@ -97,7 +97,7 @@ public class Data_Inicio_Turno : MonoBehaviour
         GetNodes();
     }
 
-
+    
     public async void GetPlayers() 
     {
         List<String> users = new List<string>();
@@ -120,16 +120,21 @@ public class Data_Inicio_Turno : MonoBehaviour
             else if (task.IsCompleted)
             {
                 DataSnapshot snapshot = task.Result;
+                int c = 0;
                 foreach (DataSnapshot user in snapshot.Children)
                 {
                     IDictionary dictUser = (IDictionary)user.Value;
                     users.Add(dictUser["username"].ToString());
                     Debug.Log(dictUser["username"].ToString());
+                    fav_unit[c] = dictUser["fav_unit"].ToString();
                     defeated.Add(false);
+                    c++;
                 }
             }
             players = users;
             Debug.Log(players.Count);
+            Debug.Log(fav_unit[0]);
+            Debug.Log(fav_unit[1]);
         });
         InitialPlayers = players.Count;
         inicio.setup();

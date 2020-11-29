@@ -12,17 +12,18 @@ using System;
 public class MainMenu : MonoBehaviour
 {
     public InputField RoomCode, FriendToAdd;
-    public Button FriendListButton, ProfileButton, CreateRoomButton, AccessRoomButton, RequestsButton, FriendsButton, AddFriend, BackButton, LogoutButton;
-    public GameObject FriendsView, RequestsView, MusicManager, scrollImage;
+    public Button FriendListButton, ProfileButton, CreateRoomButton, AccessRoomButton, RequestsButton, FriendsButton, AddFriend, BackButton, LogoutButton, UnitSelectButton, CancelSelectButton, SaveUnitButton;
+    public GameObject FriendsView, RequestsView, MusicManager, scrollImage, UnitView, MenuView;
     public GameObject FriendRow, RequestRow;
+    public Button Attack, Normal, Defense, Extra;
     public Transform FriendContent, RequestContent;
-    public Text ErrorMessage;
+    public Text ErrorMessage, Selected;
     public List<Request> requestsL;
     public List<Friend> friendsL;
     bool found, friend_showed, request_showed, room_exist, room_full, owner_friend;
     long rows;
-    int room_size;
-    public string logged_key, target, room_owner, friend_code;
+    int room_size, unt;
+    public string logged_key, target, room_owner, friend_code, fav_unit;
     private DatabaseReference reference;
     private FirebaseDatabase dbInstance;
 
@@ -37,6 +38,7 @@ public class MainMenu : MonoBehaviour
         request_showed = false;
         target = "";
         rows = 0;
+        unt = -1;
         room_exist = false;
         room_full = false;
         room_owner = "";
@@ -47,6 +49,7 @@ public class MainMenu : MonoBehaviour
         logged_key = PlayerPrefs.GetString("UID");
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
+        GetFavUnit();
         ProfileButton.onClick.AddListener(() => DisplayProfile());
         FriendListButton.onClick.AddListener(() => DisplayFriends(logged_key));
         FriendsButton.onClick.AddListener(() => DisplayFriends(logged_key));
@@ -56,7 +59,69 @@ public class MainMenu : MonoBehaviour
         LogoutButton.onClick.AddListener(() => Logout());
         CreateRoomButton.onClick.AddListener(() => CreateRoom());
         AccessRoomButton.onClick.AddListener(() => JoinRoom(RoomCode.text));
+        UnitSelectButton.onClick.AddListener(() => SelectUnit());
+        CancelSelectButton.onClick.AddListener(() => CancelUnit());
+        SaveUnitButton.onClick.AddListener(() => SaveUnit(Selected.text));
+        Attack.onClick.AddListener(() => SelectedUnit("attack"));
+        Defense.onClick.AddListener(() => SelectedUnit("defense"));
+        Normal.onClick.AddListener(() => SelectedUnit("normal"));
+        Extra.onClick.AddListener(() => SelectedUnit("link"));
+        
+    }
 
+    public async void GetFavUnit()
+    {
+        await dbInstance.GetReference("users").Child(PlayerPrefs.GetString("UID")).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted) { }
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                IDictionary user = (IDictionary)snapshot.Value;
+                fav_unit = user["fav_unit"].ToString();
+            }
+        });
+    }
+    public void SelectUnit()
+    {
+        MenuView.SetActive(false);
+        UnitView.SetActive(true);
+    }
+
+    public void SelectedUnit(string unit)
+    {
+        Selected.text = unit; 
+    }
+
+    public async void SaveUnit(string sel)
+    {
+        if (sel == "normal")
+        {
+            unt = 0;
+        }
+        else if (sel == "attack")
+        {
+            unt = 1;
+        }
+        else if (sel == "defense")
+        {
+            unt = 2;
+        }
+        else if (sel == "link")
+        {
+            unt = 3;
+        }
+        string uid = PlayerPrefs.GetString("UID");
+        await reference.Child("users").Child(uid).Child("fav_unit").SetValueAsync(unt.ToString());
+        fav_unit = unt.ToString();
+        MenuView.SetActive(true);
+        UnitView.SetActive(false);
+    }
+
+    public void CancelUnit()
+    {
+        MenuView.SetActive(true);
+        UnitView.SetActive(false);
     }
 
     public async void DisplayFriends(string key)
@@ -349,7 +414,7 @@ public class MainMenu : MonoBehaviour
             {
                 Debug.Log("Ingresando a Sala");
                 PlayerPrefs.SetString("Room", roomId);
-                PlayerClass player = new PlayerClass(PlayerPrefs.GetString("UserName"), "false");
+                PlayerClass player = new PlayerClass(PlayerPrefs.GetString("UserName"), "false", fav_unit);
                 string json = JsonUtility.ToJson(player);
                 await reference.Child("rooms").Child(roomId.ToString()).Child("players").Child(PlayerPrefs.GetString("UID")).SetRawJsonValueAsync(json);
                 SceneManager.LoadScene("RoomScene");

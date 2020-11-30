@@ -249,8 +249,8 @@ public class Nodo : MonoBehaviour
 
     public void DefinePowerFactors() //this function should be executed when ending the turn before doing the healings/damages, after all connections and points adjustments are done
     {
-        healingFactor = (int)Mathf.Sqrt(points);
-        dmgFactor = (int)Mathf.Sqrt(points);
+        healingFactor = 2*(int)Mathf.Sqrt(points);
+        dmgFactor = 2*(int)Mathf.Sqrt(points);
         if (type == 1) { dmgFactor *= 2; }
         else if (type == 2) { healingFactor *= 2; }
     }

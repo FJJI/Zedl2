@@ -94,8 +94,8 @@ public class Inicio_Ronda : MonoBehaviour
     {
         int points = unit.GetComponent<Nodo>().points;
         int unitType = unit.GetComponent<Nodo>().type;
-        unit.GetComponent<Nodo>().healingFactor = (int)Mathf.Sqrt(points);
-        unit.GetComponent<Nodo>().dmgFactor = (int)Mathf.Sqrt(points);
+        unit.GetComponent<Nodo>().healingFactor = 2*(int)Mathf.Sqrt(points);
+        unit.GetComponent<Nodo>().dmgFactor = 2*(int)Mathf.Sqrt(points);
         if (unitType == 1) { unit.GetComponent<Nodo>().dmgFactor *= 2; }
         else if (unitType == 2) { unit.GetComponent<Nodo>().healingFactor *= 2; }
     }

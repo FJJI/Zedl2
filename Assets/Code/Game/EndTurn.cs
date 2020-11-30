@@ -41,6 +41,7 @@ public class EndTurn : MonoBehaviour
             {
 
                 data.playerTurn++;
+                data.CheckEndGame();
                 if (data.playerTurn > data.InitialPlayers)
                 {
                     data.playerTurn=1;
@@ -53,7 +54,7 @@ public class EndTurn : MonoBehaviour
                 {
                     ExecuteChanges();
                     data.SaveData();
-                    data.CheckEndGame();
+
                     break;
                 }
             }

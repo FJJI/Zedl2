@@ -35,12 +35,12 @@ public class EndTurn : MonoBehaviour
     void OnMouseDown()
     {       
         if (activeButton)
-        {
-            data.CheckEndGame();
+        {           
             data.turn++;
             while(true)
             {               
                 data.playerTurn++;
+                data.CheckEndGame();
                 if (data.playerTurn > data.InitialPlayers)
                 {
                     data.playerTurn=1;

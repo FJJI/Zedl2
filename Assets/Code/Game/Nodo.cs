@@ -180,7 +180,7 @@ public class Nodo : MonoBehaviour
         transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = points.ToString();
     }
 
-    void Connect(GameObject sender, GameObject objective)//be sure to add the objective to list before using this function
+    public void Connect(GameObject sender, GameObject objective)//be sure to add the objective to list before using this function
     {
         Vector2 posSender = sender.transform.position;
         Vector2 posObjective = objective.transform.position;
@@ -201,7 +201,7 @@ public class Nodo : MonoBehaviour
         sender.GetComponent<Nodo>().unions.Add(arrowObject);
     }
 
-    void PointsAfterConnection(GameObject sender, GameObject objective)// use only with values pre validated by PermitConnection, reduce sender points by stretching concept
+    public void PointsAfterConnection(GameObject sender, GameObject objective)// use only with values pre validated by PermitConnection, reduce sender points by stretching concept
     {
         Vector2 posSender = sender.transform.position;
         Vector2 posObjective = objective.transform.position;
@@ -211,7 +211,7 @@ public class Nodo : MonoBehaviour
         sender.GetComponent<Nodo>().points = finalPoints;
     }
 
-    void RecoverPointsFromConnectionCancel(GameObject sender, GameObject objective)// recover all the points (or less when over 100) when 
+    public void RecoverPointsFromConnectionCancel(GameObject sender, GameObject objective)// recover all the points (or less when over 100) when 
     {
         Vector2 posSender = sender.transform.position;
         Vector2 posObjective = objective.transform.position;
@@ -221,10 +221,11 @@ public class Nodo : MonoBehaviour
         sender.GetComponent<Nodo>().points = finalPoints;
     }
 
-    void DeleteConnection(GameObject sender, GameObject objective) //remove the arrow from unions and objectives lists, and scene
+    public void DeleteConnection(GameObject sender, GameObject objective) //remove the arrow from unions and objectives lists, and scene
     {
         int index = sender.GetComponent<Nodo>().objectives.IndexOf(objective);
         Destroy(sender.GetComponent<Nodo>().unions[index]);
+        Debug.LogError("ME PITIE LA FLECHA");
         sender.GetComponent<Nodo>().unions.RemoveAt(index);
         sender.GetComponent<Nodo>().objectives.Remove(objective);
         sender.GetComponent<Nodo>().used_unions--;

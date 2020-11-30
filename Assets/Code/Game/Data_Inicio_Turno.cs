@@ -191,6 +191,7 @@ public class Data_Inicio_Turno : MonoBehaviour
             await reference.Child("rooms").Child(matchID.ToString()).Child("participantes").SetRawJsonValueAsync(jsonPlayer);
             Debug.Log("PC segura");
         }
+        GetNodes();
     }
 
     void Update()
@@ -216,13 +217,14 @@ public class Data_Inicio_Turno : MonoBehaviour
         List<float> p_ys = new List<float>();
         List<float> p_zs = new List<float>();
         List<Nodo> nodoClasses = new List<Nodo>();
+        List<GameObject> oo = new List<GameObject>();
         foreach (GameObject nod in nodos)
         {
             nodoClasses.Add(nod.GetComponent<Nodo>());
         }
-
         await dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("nodos").GetValueAsync().ContinueWith(task =>
         {
+            Debug.LogWarning("123123123");
             if (task.IsFaulted)
             {
             }
@@ -235,7 +237,7 @@ public class Data_Inicio_Turno : MonoBehaviour
                     IDictionary dictNodos = (IDictionary)nodo.Value;
                     int owner = int.Parse(dictNodos["owner"].ToString());
                     int t_u = int.Parse(dictNodos["total_unions"].ToString());
-                    int u_u = int.Parse(dictNodos["used_unions"].ToString());
+                    //int u_u = int.Parse(dictNodos["used_unions"].ToString());
                     int dmg = int.Parse(dictNodos["dmgFactor"].ToString());
                     int healing = int.Parse(dictNodos["healingFactor"].ToString());
                     int ident = int.Parse(dictNodos["identifier"].ToString());
@@ -244,8 +246,8 @@ public class Data_Inicio_Turno : MonoBehaviour
                     float p_y = float.Parse(dictNodos["posy"].ToString());
                     float p_z = float.Parse(dictNodos["posz"].ToString());
                     int type = int.Parse(dictNodos["type"].ToString());
-                    if (u_u != 0)
-                    {
+                    //if (u_u != 0)
+                    //{
                         Debug.Log("objetivos");
                         foreach (DataSnapshot objs in nodo.Child("objectives").Children)
                         {
@@ -253,7 +255,7 @@ public class Data_Inicio_Turno : MonoBehaviour
                             objetivos.Add(int.Parse(objs.Value.ToString()));
                         }
                         objetivos_tot.Add(objetivos);
-                    }
+                    //}
                     // Acualizamos nodos
                     if (nodos.Count == 0)
                     {
@@ -261,7 +263,7 @@ public class Data_Inicio_Turno : MonoBehaviour
 
                         owners.Add(owner);
                         t_us.Add(t_u);
-                        u_us.Add(u_u);
+                        //u_us.Add(u_u);
                         dmgs.Add(dmg);
                         heals.Add(healing);
                         idents.Add(ident);
@@ -279,22 +281,32 @@ public class Data_Inicio_Turno : MonoBehaviour
                             {
                                 nodoLocal.owner = owner;
                                 nodoLocal.total_unions = t_u;
-                                nodoLocal.used_unions = u_u;
+                                //nodoLocal.used_unions = u_u;
                                 nodoLocal.dmgFactor = dmg;
                                 nodoLocal.healingFactor = healing;
                                 nodoLocal.identifier = ident;
                                 nodoLocal.points = points;
 
 
-                                nodoLocal.objectives.Clear();
+                                //nodoLocal.objectives.Clear();
                                 // To Do, Botar Flechas  --> Emilio
 
                                 for (int i = 0; i < objetivos.Count; i++)
                                 {
-                                    nodoLocal.objectives.Add(nodos[objetivos[i]]);
+                                    //nodoLocal.objectives.Add(nodos[objetivos[i]]);
+                                    oo.Add(nodos[objetivos[i]]);
                                     // TO DO: Hacer Flechas --> Emilio
 
                                 }
+                                /*
+                                for (int q = 0; q < nodoLocal.objectives.Count; q++)
+                                {
+                                    Nodo a = nodoClasses.SingleOrDefault(x => x.name == nodoLocal.objectives[q].name);
+
+                                    Debug.LogWarning("CONECTA NODO " + nodoLocal.identifier + "CON " + a.identifier);
+                                    nodoLocal.DeleteConnection(nodoLocal.transform.gameObject, a.transform.gameObject);
+                                    Debug.LogWarning("CONECTA");
+                                }*/
                             }
                         }
                     }
@@ -329,11 +341,39 @@ public class Data_Inicio_Turno : MonoBehaviour
                     GameObject data_obj = nodos.SingleOrDefault(x => x.GetComponent<Nodo>().identifier == objetivos_tot[i][e]);
                     dataNode.objectives.Add(data_obj);
                 }
+                foreach (GameObject o in dataNode.objectives)
+                {
+                    dataNode.Connect(dataNode.transform.gameObject, o);
+                }
             }
+
         }
         else
         {
-            //nodoLocal.transform.position = new Vector3(p_x, p_y, p_z);
+            foreach (GameObject node in nodos)
+            {
+                int i = 0;
+                Nodo dataNode = node.GetComponent<Nodo>();
+                while(dataNode.unions.Count > 0)
+                {
+                    //Debug.LogError("RECUPERO  " + dataNode.identifier + dataNode.objectives[0].GetComponent<Nodo>().identifier);
+                    //dataNode.RecoverPointsFromConnectionCancel(dataNode.transform.gameObject, dataNode.objectives[0]);
+                    dataNode.DeleteConnection(dataNode.transform.gameObject, dataNode.objectives[0]);
+                }
+                for (int e = 0; e < objetivos_tot[i].Count; e++)
+                {
+                    
+                    if (dataNode.identifier == i)
+                    {
+                        //Debug.LogError("COnecta " + objetivos_tot[i][e]);
+                        GameObject data_obj = nodos.SingleOrDefault(x => x.GetComponent<Nodo>().identifier == objetivos_tot[i][e]);
+                        dataNode.objectives.Add(data_obj);
+                        dataNode.Connect(dataNode.transform.gameObject, data_obj);
+                        //dataNode.PointsAfterConnection(dataNode.transform.gameObject, data_obj);
+                        dataNode.used_unions += 1;
+                    }
+                }
+            }
         }
     }
 

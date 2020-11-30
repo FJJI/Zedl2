@@ -330,16 +330,18 @@ public class Data_Inicio_Turno : MonoBehaviour
             {
                 int i = 0;
                 Nodo dataNode = node.GetComponent<Nodo>();
-                for(int e = 0; e < objetivos_tot[i].Count; e++)
+                for (int e = 0; e < objetivos_tot[i].Count; e++)
                 {
-                    GameObject data_obj = nodos.SingleOrDefault(x => x.GetComponent<Nodo>().identifier == objetivos_tot[i][e]);
-                    dataNode.objectives.Add(data_obj);
+                    if (dataNode.identifier == i)
+                    {
+                        //Debug.LogError("COnecta " + objetivos_tot[i][e]);
+                        GameObject data_obj = nodos.SingleOrDefault(x => x.GetComponent<Nodo>().identifier == objetivos_tot[i][e]);
+                        dataNode.objectives.Add(data_obj);
+                        dataNode.Connect(dataNode.transform.gameObject, data_obj);
+                        //dataNode.PointsAfterConnection(dataNode.transform.gameObject, data_obj);
+                        dataNode.used_unions += 1;
+                    }
                 }
-                foreach (GameObject o in dataNode.objectives)
-                {
-                    dataNode.Connect(dataNode.transform.gameObject, o);
-                }
-            }
 
         }
         else

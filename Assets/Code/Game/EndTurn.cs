@@ -36,6 +36,7 @@ public class EndTurn : MonoBehaviour
     {       
         if (activeButton)
         {
+            data.CheckEndGame();
             data.turn++;
             while(true)
             {

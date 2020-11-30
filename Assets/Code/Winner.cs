@@ -32,11 +32,17 @@ public class Winner : MonoBehaviour
         dbInstance = FirebaseDatabase.DefaultInstance; //lectura
         myId = PlayerPrefs.GetString("UID");
         setWin_Loses_stats();
+        DeleteRoom();
     }
 
     void GoToMenu()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    async void DeleteRoom()
+    {
+        await reference.Child("rooms").Child(PlayerPrefs.GetString("rooms")).RemoveValueAsync();
     }
 
     async void setWin_Loses_stats()

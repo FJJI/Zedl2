@@ -110,7 +110,6 @@ public class Data_Inicio_Turno : MonoBehaviour
         }
         DataSnapshot msg = args.Snapshot;
         turn = int.Parse(msg.Value.ToString());
-        CheckEndGame();
     }
 
     private void HandleChangePlayer(object sender, ValueChangedEventArgs args)
@@ -402,6 +401,7 @@ public class Data_Inicio_Turno : MonoBehaviour
     public void CheckEndGame()
     {
         Debug.Log(losers);
+        Debug.Log(players.Count);
         List<int> owners = new List<int>();
         for (int j = 0; j < players.Count+1; j++)
         {

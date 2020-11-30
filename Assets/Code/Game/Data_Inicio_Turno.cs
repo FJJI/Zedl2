@@ -67,6 +67,7 @@ public class Data_Inicio_Turno : MonoBehaviour
         matchID = int.Parse(PlayerPrefs.GetString("Room"));
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("turn").ValueChanged += HandleChangeTurn;
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("playerTurn").ValueChanged += HandleChangePlayer;
+        dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("losers").ValueChanged += HandleChangelosers;
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("nodos").ChildAdded += HandleNodoAdded;
         nodes = new List<GameObject> { Normal, Ataque, Defensa, Extra }; // Ajustar por el que se toma en favoritos 
 
@@ -98,6 +99,18 @@ public class Data_Inicio_Turno : MonoBehaviour
         }
         
 
+    }
+
+    private void HandleChangelosers(object sender, ValueChangedEventArgs args)
+    {
+
+        if (args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+        DataSnapshot msg = args.Snapshot;
+        losers = int.Parse(msg.Value.ToString());
     }
 
     private void HandleChangeTurn(object sender, ValueChangedEventArgs args)
@@ -176,7 +189,7 @@ public class Data_Inicio_Turno : MonoBehaviour
             jsonNodos = JsonUtility.ToJson(nc);
             await reference.Child("rooms").Child(matchID.ToString()).Child("nodos").Child(ident).SetRawJsonValueAsync(jsonNodos);
         }
-        DataClass dc = new DataClass(matchID, turn, playerTurn, InitialPlayers);
+        DataClass dc = new DataClass(matchID, turn, playerTurn, InitialPlayers, losers);
         string jsonData = JsonUtility.ToJson(dc);
         await reference.Child("rooms").Child(matchID.ToString()).Child("datapartida").SetRawJsonValueAsync(jsonData);
 

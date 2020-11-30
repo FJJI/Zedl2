@@ -33,7 +33,8 @@ public class loginscript : MonoBehaviour
         just_created = false;
         reference = FirebaseDatabase.DefaultInstance.RootReference;
         dbInstance = FirebaseDatabase.DefaultInstance;
-
+        PasswordInput.contentType =  InputField.ContentType.Password;
+        RePasswordInput.contentType = InputField.ContentType.Password;
         CreateButton.gameObject.SetActive(false);
         BackButton.gameObject.SetActive(false);
         RePasswordInput.gameObject.SetActive(false);

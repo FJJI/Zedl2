@@ -25,8 +25,9 @@ public class Data_Inicio_Turno : MonoBehaviour
     public List<string> fav_unit = new List<string> { "none", "none", "none", "none" };
     public List<string> players;
     public List<NodoClass> DBnodos;
+    public int losers;
 
-// Los Nodos + la flecha 
+    // Los Nodos + la flecha 
     public GameObject Normal;
     public GameObject Extra;
     public GameObject Ataque;
@@ -56,6 +57,7 @@ public class Data_Inicio_Turno : MonoBehaviour
     [Obsolete]
     private void Start()
     {
+        losers = 0;
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://zeldnew.firebaseio.com/");
         reference = FirebaseDatabase.DefaultInstance.RootReference; //escritura
         players = new List<string>();
@@ -107,9 +109,8 @@ public class Data_Inicio_Turno : MonoBehaviour
             return;
         }
         DataSnapshot msg = args.Snapshot;
-        Debug.Log(msg.Value.ToString());
         turn = int.Parse(msg.Value.ToString());
-
+        CheckEndGame();
     }
 
     private void HandleChangePlayer(object sender, ValueChangedEventArgs args)
@@ -120,7 +121,6 @@ public class Data_Inicio_Turno : MonoBehaviour
             return;
         }
         DataSnapshot msg = args.Snapshot;
-        Debug.Log(msg.Value.ToString());
         playerTurn = int.Parse(msg.Value.ToString());
         GetNodes();
     }
@@ -153,18 +153,16 @@ public class Data_Inicio_Turno : MonoBehaviour
                 {
                     IDictionary dictUser = (IDictionary)user.Value;
                     users.Add(dictUser["username"].ToString());
-                    Debug.Log(dictUser["username"].ToString());
                     fav_unit[c] = dictUser["fav_unit"].ToString();
                     defeated.Add(false);
                     c++;
                 }
             }
             players = users;
-            Debug.Log(players.Count);
-            Debug.Log(fav_unit[0]);
-            Debug.Log(fav_unit[1]);
+
         });
         InitialPlayers = players.Count;
+        Debug.Log(InitialPlayers);
         inicio.setup();
     }
     
@@ -173,7 +171,6 @@ public class Data_Inicio_Turno : MonoBehaviour
     {
         for (int i = 1; i <= nodos.Count; i++) // pongo los nodos en formato para guardars
         {
-            Debug.Log("Nodo" + (i-1));
             NodoClass nc = new NodoClass(nodos[i - 1]);
             string ident = nc.identifier.ToString();
             jsonNodos = JsonUtility.ToJson(nc);
@@ -182,14 +179,12 @@ public class Data_Inicio_Turno : MonoBehaviour
         DataClass dc = new DataClass(matchID, turn, playerTurn, InitialPlayers);
         string jsonData = JsonUtility.ToJson(dc);
         await reference.Child("rooms").Child(matchID.ToString()).Child("datapartida").SetRawJsonValueAsync(jsonData);
-        Debug.Log("data segura");
 
         for (int i = 0; i < InitialPlayers; i++)
         {
             PlayerClassGame pc = new PlayerClassGame(players[i], i+1, defeated[i], -1);
             string jsonPlayer = JsonUtility.ToJson(pc);
             await reference.Child("rooms").Child(matchID.ToString()).Child("participantes").SetRawJsonValueAsync(jsonPlayer);
-            Debug.Log("PC segura");
         }
     }
 
@@ -246,10 +241,8 @@ public class Data_Inicio_Turno : MonoBehaviour
                     int type = int.Parse(dictNodos["type"].ToString());
                     if (u_u != 0)
                     {
-                        Debug.Log("objetivos");
                         foreach (DataSnapshot objs in nodo.Child("objectives").Children)
                         {
-                            Debug.Log(objs.Value.ToString());
                             objetivos.Add(int.Parse(objs.Value.ToString()));
                         }
                         objetivos_tot.Add(objetivos);
@@ -334,6 +327,7 @@ public class Data_Inicio_Turno : MonoBehaviour
         else
         {
             //nodoLocal.transform.position = new Vector3(p_x, p_y, p_z);
+
         }
     }
 
@@ -350,6 +344,48 @@ public class Data_Inicio_Turno : MonoBehaviour
         nuevo_nodo.GetComponent<Nodo>().points = points;
 
         nodos.Add(nuevo_nodo);
+    }
+
+    public void CheckEndGame()
+    {
+        Debug.Log(losers);
+        List<int> owners = new List<int>();
+        for (int j = 0; j < players.Count+1; j++)
+        {
+            owners.Add(0);
+        }
+        for (int i = 0; i < nodos.Count; i++)
+        {
+            owners[nodos[i].gameObject.GetComponent<Nodo>().owner]++;
+        }
+        if (owners.IndexOf(0) != -1)
+        {
+            if (owners.IndexOf(0) > 0)
+            {
+                if (defeated[owners.IndexOf(0) - 1] == false)
+                {
+                    defeated[owners.IndexOf(0) - 1] = true;
+                    losers++;
+                }              
+            }
+            if (players[owners.IndexOf(0) - 1] == PlayerPrefs.GetString("UserName"))
+            {
+                //PERDI, LLEVARME A LA ESCENA DEL JUEGO TERMINADO
+                SceneManager.LoadScene("GameOver");
+            }
+            else if (players.Count - losers == 1)
+            {
+                // TODOS PERDIERON MENOS YO, CARGAR ESCENA JUEGO TERMINADO
+                SceneManager.LoadScene("Winner");
+            }
+
+        }
+        if (owners.IndexOf(10) != -1)
+        {
+            Debug.Log("Juego Terminado");
+            //ESCENA JUEGO TERMINADO
+            SceneManager.LoadScene("GameOver");
+        }
     }
     
 }

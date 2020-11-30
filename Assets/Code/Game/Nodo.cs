@@ -97,7 +97,6 @@ public class Nodo : MonoBehaviour
             {
                 if (data.playerTurn == owner)
                 {
-                    Debug.Log("Seleccionado" + this.gameObject);
                     first = this.transform.gameObject;
                 }
                 else

@@ -10,18 +10,11 @@ public class Inicio_Ronda : MonoBehaviour
     Data_Inicio_Turno data;
     public void setup()
     {
-        Debug.Log(data.turn);
-        Debug.Log(data.playerTurn);
-        Debug.Log(data.players[data.playerTurn - 1]);
-        Debug.Log(PlayerPrefs.GetString("UserName"));
         if (data.turn == 0 && data.players[data.playerTurn-1] == PlayerPrefs.GetString("UserName")) // si es el primer turno (turno 0 para el armado), armo una nueva partida, de lo contrario, cargo los datos existentes.
         {
             defaultStart();
         }
-        else  // Cargo la partida guardada
-        {
-            
-        }
+        
     }
 
     void defaultStart() // Este metodo crea 10 nodos para partir (por ahora en posicion fixed)
@@ -37,7 +30,6 @@ public class Inicio_Ronda : MonoBehaviour
         List<int> positionsy = new List<int> { 3,-3,-3, 3,-2, 2,-2, 2, 3,-3};
         for (int i = 1; i <= 10; i++)
         {
-            Debug.Log(i);
             GameObject nuevo_nodo;
             if (i <= data.InitialPlayers)
             {

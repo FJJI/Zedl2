@@ -17,8 +17,7 @@ public class EndTurn : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        data.CheckEndGame();
+    {     
         turn = data.playerTurn;
         if(data.players[turn-1]==PlayerPrefs.GetString("UserName"))
         {
@@ -48,9 +47,11 @@ public class EndTurn : MonoBehaviour
                 if (data.defeated[data.playerTurn-1] == true)
                 {
                     data.playerTurn++;
-                }               
+                }
+                
                 if (!(data.defeated[data.playerTurn-1]))
                 {
+                    data.CheckEndGame();
                     ExecuteChanges();
                     data.SaveData();
 

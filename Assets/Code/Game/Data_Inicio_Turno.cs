@@ -431,7 +431,6 @@ public class Data_Inicio_Turno : MonoBehaviour
             else if (players.Count - losers == 1)
             {
                 // TODOS PERDIERON MENOS YO, CARGAR ESCENA JUEGO TERMINADO
-                SaveData();
                 SceneManager.LoadScene("Winner");
             }
 

@@ -25,9 +25,23 @@ public class Inicio_Ronda : MonoBehaviour
         GameObject Defensa = data.Defensa;
         List<GameObject> nodes = new List<GameObject> {Normal, Ataque, Defensa,Extra}; // Ajustar por el que se toma en favoritos 
         // Tipo 0 es normal, 1 es warrior, 2 es defensa, 3 es nodo extra
-
-        List<int> positionsx = new List<int> { 7,-7, 7,-7, 4, 4,-4,-4, 0, 0};
-        List<int> positionsy = new List<int> { 3,-3,-3, 3,-2, 2,-2, 2, 3,-3};
+        List<int> positionsx;
+        List<int> positionsy;
+        List<int> positx  = new List<int> { 7,-7, 7,-7, 4, 4,-4,-4, 0, 0};
+        List<int> posity  = new List<int> { 3,-3,-3, 3,-2, 2,-2, 2, 3,-3};
+        List<int> positx2 = new List<int> { 6,-6, 0, 0, 4, 4,-4,-4, 2,-2};
+        List<int> posity2 = new List<int> { 0, 0, 3,-3, 3,-3, 3,-3, 0, 0};
+        int map = Random.Range(1, 3);
+        if (data.InitialPlayers != 2 && map == 1)
+        {
+            positionsx = positx;
+            positionsy = posity;
+        }
+        else 
+        {
+            positionsx = positx2;
+            positionsy = posity2;
+        }
         for (int i = 1; i <= 10; i++)
         {
             GameObject nuevo_nodo;

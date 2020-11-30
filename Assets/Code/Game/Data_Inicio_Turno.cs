@@ -326,9 +326,10 @@ public class Data_Inicio_Turno : MonoBehaviour
             }
 
             //objetivos 
+            int i = 0;
             foreach (GameObject node in nodos)
             {
-                int i = 0;
+
                 Nodo dataNode = node.GetComponent<Nodo>();
                 while (dataNode.unions.Count > 0)
                 {
@@ -338,6 +339,7 @@ public class Data_Inicio_Turno : MonoBehaviour
                 }
                 for (int e = 0; e < objetivos_tot[i].Count; e++)
                 {
+
                     if (dataNode.identifier == i)
                     {
                         //Debug.LogError("COnecta " + objetivos_tot[i][e]);
@@ -348,6 +350,7 @@ public class Data_Inicio_Turno : MonoBehaviour
                         dataNode.used_unions += 1;
                     }
                 }
+                i++;
             }
         }
         else

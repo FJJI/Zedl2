@@ -168,6 +168,7 @@ public class Data_Inicio_Turno : MonoBehaviour
 
     public async void SaveData()
     {
+        
         for (int i = 1; i <= nodos.Count; i++) // pongo los nodos en formato para guardars
         {
             NodoClass nc = new NodoClass(nodos[i - 1]);

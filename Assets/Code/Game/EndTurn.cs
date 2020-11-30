@@ -41,13 +41,13 @@ public class EndTurn : MonoBehaviour
             {
 
                 data.playerTurn++;
-                if (data.defeated[data.playerTurn] == true)
-                {
-                    data.playerTurn++;
-                }
                 if(data.playerTurn > data.InitialPlayers)
                 {
                     data.playerTurn=1;
+                }
+                if (data.defeated[data.playerTurn-1] == true)
+                {
+                    data.playerTurn++;
                 }
                 if (!(data.defeated[data.playerTurn-1]))
                 {

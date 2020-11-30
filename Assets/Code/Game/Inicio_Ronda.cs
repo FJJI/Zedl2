@@ -32,7 +32,7 @@ public class Inicio_Ronda : MonoBehaviour
         List<int> positx2 = new List<int> { 6,-6, 0, 0, 4, 4,-4,-4, 2,-2};
         List<int> posity2 = new List<int> { 0, 0, 3,-3, 3,-3, 3,-3, 0, 0};
         int map = Random.Range(1, 3);
-        if (data.InitialPlayers != 2 && map == 1)
+        if (data.InitialPlayers != 2)
         {
             positionsx = positx;
             positionsy = posity;

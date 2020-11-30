@@ -20,12 +20,7 @@ public class Inicio_Ronda : MonoBehaviour
         }
         else  // Cargo la partida guardada
         {
-            Thread t = new Thread(new ParameterizedThreadStart((object sender) =>
-            {
-                Thread.Sleep(4000);
-                data.GetNodes();
-            }));
-            t.Start();
+            
         }
     }
 

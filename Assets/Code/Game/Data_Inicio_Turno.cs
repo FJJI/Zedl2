@@ -65,8 +65,36 @@ public class Data_Inicio_Turno : MonoBehaviour
         matchID = int.Parse(PlayerPrefs.GetString("Room"));
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("turn").ValueChanged += HandleChangeTurn;
         dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("datapartida").Child("playerTurn").ValueChanged += HandleChangePlayer;
-
+        dbInstance.GetReference("rooms").Child(matchID.ToString()).Child("nodos").ChildAdded += HandleNodoAdded;
         nodes = new List<GameObject> { Normal, Ataque, Defensa, Extra }; // Ajustar por el que se toma en favoritos 
+
+    }
+
+    private void HandleNodoAdded(object sender, ChildChangedEventArgs args)
+    {
+        if (players[0] != PlayerPrefs.GetString("UserName"))
+        {
+            if (args.DatabaseError != null)
+            {
+                Debug.LogError(args.DatabaseError.Message);
+                return;
+            }
+            DataSnapshot msg = args.Snapshot;
+            IDictionary dictNodos = (IDictionary)msg.Value;
+            int owner = int.Parse(dictNodos["owner"].ToString());
+            int t_u = int.Parse(dictNodos["total_unions"].ToString());
+            int u_u = int.Parse(dictNodos["used_unions"].ToString());
+            int dmg = int.Parse(dictNodos["dmgFactor"].ToString());
+            int healing = int.Parse(dictNodos["healingFactor"].ToString());
+            int ident = int.Parse(dictNodos["identifier"].ToString());
+            int points = int.Parse(dictNodos["points"].ToString());
+            float p_x = float.Parse(dictNodos["posx"].ToString());
+            float p_y = float.Parse(dictNodos["posy"].ToString());
+            float p_z = float.Parse(dictNodos["posz"].ToString());
+            int type = int.Parse(dictNodos["type"].ToString());
+            CreateNode(owner, type, p_x, p_y, p_z, t_u, u_u, dmg, healing, ident, points);
+        }
+        
 
     }
 
@@ -212,7 +240,6 @@ public class Data_Inicio_Turno : MonoBehaviour
                     int healing = int.Parse(dictNodos["healingFactor"].ToString());
                     int ident = int.Parse(dictNodos["identifier"].ToString());
                     int points = int.Parse(dictNodos["points"].ToString());
-                    Debug.Log(points);
                     float p_x = float.Parse(dictNodos["posx"].ToString());
                     float p_y = float.Parse(dictNodos["posy"].ToString());
                     float p_z = float.Parse(dictNodos["posz"].ToString());
@@ -308,6 +335,21 @@ public class Data_Inicio_Turno : MonoBehaviour
         {
             //nodoLocal.transform.position = new Vector3(p_x, p_y, p_z);
         }
+    }
+
+    void CreateNode(int owner, int type, float p_xs, float p_ys, float p_zs, int t_u, int u_u, int dmg, int heal, int ident, int points)
+    {
+        GameObject nuevo_nodo;
+        nuevo_nodo = Instantiate(nodes[type], new Vector3(p_xs, p_ys, p_zs), Quaternion.identity);
+        nuevo_nodo.GetComponent<Nodo>().owner = owner;
+        nuevo_nodo.GetComponent<Nodo>().total_unions = t_u;
+        nuevo_nodo.GetComponent<Nodo>().used_unions = u_u;
+        nuevo_nodo.GetComponent<Nodo>().dmgFactor = dmg;
+        nuevo_nodo.GetComponent<Nodo>().healingFactor = heal;
+        nuevo_nodo.GetComponent<Nodo>().identifier = ident;
+        nuevo_nodo.GetComponent<Nodo>().points = points;
+
+        nodos.Add(nuevo_nodo);
     }
     
 }

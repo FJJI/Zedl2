@@ -424,6 +424,7 @@ public class Data_Inicio_Turno : MonoBehaviour
             }
             if (players[owners.IndexOf(0) - 1] == PlayerPrefs.GetString("UserName"))
             {
+                SaveData();
                 //PERDI, LLEVARME A LA ESCENA DEL JUEGO TERMINADO
                 SceneManager.LoadScene("GameOver");
             }

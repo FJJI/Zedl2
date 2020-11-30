@@ -216,7 +216,15 @@ public class Nodo : MonoBehaviour
         Vector2 posObjective = objective.transform.position;
         float distTotal = Vector2.Distance(posSender, posObjective);
         int points = sender.GetComponent<Nodo>().points;
-        int finalPoints =  Mathf.Min(100, points + (int)(90f * distTotal/25f));
+        int finalPoints;
+        if(sender.GetComponent<Nodo>().type==0)
+        {
+            finalPoints =  Mathf.Min(150, points + (int)(90f * distTotal/25f));
+        }
+        else
+        {
+            finalPoints =  Mathf.Min(100, points + (int)(90f * distTotal/25f));
+        }
         sender.GetComponent<Nodo>().points = finalPoints;
     }
 
@@ -261,7 +269,14 @@ public class Nodo : MonoBehaviour
         Nodo objectiveAttributes = objective.GetComponent<Nodo>();
         if (senderAttributes.owner == objectiveAttributes.owner)
         {
-            objectiveAttributes.points = Mathf.Min(100, objectiveAttributes.points + senderAttributes.healingFactor);
+            if(objectiveAttributes.type==0)
+            {
+                objectiveAttributes.points = Mathf.Min(150, objectiveAttributes.points + senderAttributes.healingFactor);
+            }
+            else
+            {
+                objectiveAttributes.points = Mathf.Min(100, objectiveAttributes.points + senderAttributes.healingFactor);
+            }
         }
         else
         {

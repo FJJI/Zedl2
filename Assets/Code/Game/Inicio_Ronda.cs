@@ -106,7 +106,14 @@ public class Inicio_Ronda : MonoBehaviour
         Nodo objectiveAttributes = objective.GetComponent<Nodo>();
         if (senderAttributes.owner == objectiveAttributes.owner)
         {
-            objectiveAttributes.points = Mathf.Min(100, objectiveAttributes.points + senderAttributes.healingFactor);
+            if(objectiveAttributes.type==0)
+            {
+                objectiveAttributes.points = Mathf.Min(150, objectiveAttributes.points + senderAttributes.healingFactor);
+            }
+            else
+            {
+                objectiveAttributes.points = Mathf.Min(100, objectiveAttributes.points + senderAttributes.healingFactor);
+            }
         }
         else
         {

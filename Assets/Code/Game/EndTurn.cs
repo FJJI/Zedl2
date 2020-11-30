@@ -33,24 +33,26 @@ public class EndTurn : MonoBehaviour
     }
 
     void OnMouseDown()
-    {
-        if(activeButton)
+    {       
+        if (activeButton)
         {
             data.turn++;
             while(true)
             {
 
                 data.playerTurn++;
-                Debug.Log(data.playerTurn - 1);
                 if(data.playerTurn > data.InitialPlayers)
                 {
                     data.playerTurn=1;
                 }
-                Debug.Log(data.playerTurn - 1);
+                if (data.defeated[data.playerTurn-1] == true)
+                {
+                    data.playerTurn++;
+                }
                 if (!(data.defeated[data.playerTurn-1]))
                 {
                     ExecuteChanges();
-                    data.SaveData();
+                    data.SaveData();                  
                     break;
                 }
             }

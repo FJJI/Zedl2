@@ -206,7 +206,7 @@ public class Nodo : MonoBehaviour
         Vector2 posObjective = objective.transform.position;
         float distTotal = Vector2.Distance(posSender, posObjective);
         int points = sender.GetComponent<Nodo>().points;
-        int finalPoints = points - (int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth);
+        int finalPoints = points - (int)(90f * distTotal/25f);
         sender.GetComponent<Nodo>().points = finalPoints;
     }
 
@@ -216,7 +216,7 @@ public class Nodo : MonoBehaviour
         Vector2 posObjective = objective.transform.position;
         float distTotal = Vector2.Distance(posSender, posObjective);
         int points = sender.GetComponent<Nodo>().points;
-        int finalPoints =  Mathf.Min(100, points + (int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth));
+        int finalPoints =  Mathf.Min(100, points + (int)(90f * distTotal/25f));
         sender.GetComponent<Nodo>().points = finalPoints;
     }
 
@@ -236,7 +236,7 @@ public class Nodo : MonoBehaviour
         Vector2 posSender = sender.transform.position;
         Vector2 posObjective = objective.transform.position;
         float distTotal = Vector2.Distance(posSender, posObjective);
-        if ((int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth) <= points)
+        if ((int)(90f * distTotal / 25f) <= points)
         {
             return true;
         }

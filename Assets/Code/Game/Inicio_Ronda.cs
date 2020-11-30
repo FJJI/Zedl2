@@ -126,7 +126,7 @@ public class Inicio_Ronda : MonoBehaviour
         Vector2 posSender = sender.transform.position;
         Vector2 posObjective = objective.transform.position;
         float distTotal = Vector2.Distance(posSender, posObjective);
-        if ((int)(90f * distTotal / Camera.main.GetComponent<CameraSize>().camWidth) <= points)
+        if ((int)(90f * distTotal / 25f) <= points)
         {
             return true;
         }

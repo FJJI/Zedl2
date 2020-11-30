@@ -342,7 +342,7 @@ public class Data_Inicio_Turno : MonoBehaviour
                         dataNode.used_unions += 1;
                     }
                 }
-
+            }
         }
         else
         {

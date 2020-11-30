@@ -40,15 +40,15 @@ public class EndTurn : MonoBehaviour
             while(true)
             {               
                 data.playerTurn++;
-                data.CheckEndGame();
                 if (data.playerTurn > data.InitialPlayers)
                 {
                     data.playerTurn=1;
-                }
+                }             
                 if (data.defeated[data.playerTurn-1] == true)
                 {
                     data.playerTurn++;
                 }
+                data.CheckEndGame();
                 if (!(data.defeated[data.playerTurn-1]))
                 {
                     ExecuteChanges();

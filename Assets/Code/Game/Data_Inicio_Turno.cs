@@ -330,6 +330,12 @@ public class Data_Inicio_Turno : MonoBehaviour
             {
                 int i = 0;
                 Nodo dataNode = node.GetComponent<Nodo>();
+                while (dataNode.unions.Count > 0)
+                {
+                    //Debug.LogError("RECUPERO  " + dataNode.identifier + dataNode.objectives[0].GetComponent<Nodo>().identifier);
+                    //dataNode.RecoverPointsFromConnectionCancel(dataNode.transform.gameObject, dataNode.objectives[0]);
+                    dataNode.DeleteConnection(dataNode.transform.gameObject, dataNode.objectives[0]);
+                }
                 for (int e = 0; e < objetivos_tot[i].Count; e++)
                 {
                     if (dataNode.identifier == i)
@@ -346,9 +352,10 @@ public class Data_Inicio_Turno : MonoBehaviour
         }
         else
         {
+            int i = 0;
             foreach (GameObject node in nodos)
             {
-                int i = 0;
+                
                 Nodo dataNode = node.GetComponent<Nodo>();
                 while(dataNode.unions.Count > 0)
                 {
@@ -369,6 +376,7 @@ public class Data_Inicio_Turno : MonoBehaviour
                         dataNode.used_unions += 1;
                     }
                 }
+                i++;
             }
         }
     }
